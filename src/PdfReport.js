@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
-const PdfReport = ({ birthDate, birthTime, latitude, longitude, timezone, name }) => {
+const PdfReport = ({ birthDate, birthTime, latitude, longitude, timezone, name, language = 'en' }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [pages, setPages] = useState(null);
@@ -10,7 +11,7 @@ const PdfReport = ({ birthDate, birthTime, latitude, longitude, timezone, name }
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getPdfReport(birthDate, birthTime, latitude, longitude, timezone, name);
+      const result = await astrologyApi.getPdfReport(birthDate, birthTime, latitude, longitude, timezone, name, language);
       if (result.pages) setPages(result.pages);
       if (result.base64) {
         const byteChars = atob(result.base64);
@@ -38,9 +39,9 @@ const PdfReport = ({ birthDate, birthTime, latitude, longitude, timezone, name }
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">📄 PDF Report</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">📄 {language === 'hi' ? HI.pdfReport : 'PDF Report'}</h2>
 
-      <p className="text-gray-400 mb-6">Generate a comprehensive PDF report of your astrological analysis.</p>
+      <p className="text-gray-400 mb-6">{language === 'hi' ? 'अपने ज्योतिषीय विश्लेषण की एक विस्तृत PDF रिपोर्ट तैयार करें।' : 'Generate a comprehensive PDF report of your astrological analysis.'}</p>
 
       <button onClick={generateReport} disabled={loading} className="w-full py-4 bg-purple-600 text-white rounded-lg font-bold disabled:opacity-50 text-lg">
         {loading ? (
@@ -49,16 +50,16 @@ const PdfReport = ({ birthDate, birthTime, latitude, longitude, timezone, name }
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
             </svg>
-            Generating Report...
+            {language === 'hi' ? HI.generating : 'Generating Report...'}
           </span>
-        ) : '📄 Download Your Report (PDF)'}
+        ) : `📄 ${language === 'hi' ? HI.download : 'Download Your Report (PDF)'}`}
       </button>
 
       {error && <p className="text-red-400 mt-4">{error}</p>}
 
       {pages && !loading && (
         <div className="bg-green-900 p-4 rounded-lg mt-4 text-center">
-          <p className="text-green-300">✅ Report generated successfully!</p>
+          <p className="text-green-300">✅ {language === 'hi' ? 'रिपोर्ट सफलतापूर्वक तैयार!' : 'Report generated successfully!'}</p>
           <p className="text-green-400 text-sm mt-1">{pages} pages</p>
         </div>
       )}

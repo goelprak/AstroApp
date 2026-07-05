@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
 import InlineAI from './InlineAI';
+import { HI } from './hi';
 
-const WeeklyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
+const WeeklyHoroscope = ({ userSign, onUpdateContext, birthData, language = 'en' }) => {
   const [sign, setSign] = useState(userSign || 'Aries');
   const [horoscope, setHoroscope] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -12,7 +13,7 @@ const WeeklyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getWeeklyHoroscope(sign);
+      const result = await astrologyApi.getWeeklyHoroscope(sign, language);
       setHoroscope(result);
       if (onUpdateContext) {
         onUpdateContext({
@@ -49,7 +50,7 @@ const WeeklyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">📅 Weekly Horoscope</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">📅 {language === 'hi' ? HI.weeklyHoroscope : 'Weekly Horoscope'}</h2>
       
       <div className="mb-4">
         <label className="block text-gray-300 mb-2">Select Your Sign</label>
@@ -93,19 +94,19 @@ const WeeklyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-pink-400 mb-2">💕 Love</h3>
+              <h3 className="text-lg font-semibold text-pink-400 mb-2">💕 {language === 'hi' ? HI.love : 'Love'}</h3>
               <p className="text-gray-300">{horoscope.love}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-blue-400 mb-2">💼 Career</h3>
+              <h3 className="text-lg font-semibold text-blue-400 mb-2">💼 {language === 'hi' ? HI.career : 'Career'}</h3>
               <p className="text-gray-300">{horoscope.career}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-green-400 mb-2">❤️ Health</h3>
+              <h3 className="text-lg font-semibold text-green-400 mb-2">❤️ {language === 'hi' ? HI.health : 'Health'}</h3>
               <p className="text-gray-300">{horoscope.health}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-yellow-400 mb-2">💰 Finance</h3>
+              <h3 className="text-lg font-semibold text-yellow-400 mb-2">💰 {language === 'hi' ? HI.finance : 'Finance'}</h3>
               <p className="text-gray-300">{horoscope.finance}</p>
             </div>
           </div>
@@ -127,14 +128,14 @@ const WeeklyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
           </div>
           {horoscope.best_window && (
             <div className="bg-gray-800 p-3 rounded">
-              <span className="text-gray-400 text-sm">⏰ Best Window: </span>
+              <span className="text-gray-400 text-sm">⏰ {language === 'hi' ? HI.bestWindow : 'Best Window'}: </span>
               <span className="text-white">{horoscope.best_window}</span>
             </div>
           )}
 
           {horoscope.preparation && (
             <div className="bg-indigo-900 p-3 rounded">
-              <span className="text-gray-400 text-sm">📋 Preparation: </span>
+              <span className="text-gray-400 text-sm">📋 {language === 'hi' ? HI.preparation : 'Preparation'}: </span>
               <span className="text-white">{horoscope.preparation}</span>
             </div>
           )}

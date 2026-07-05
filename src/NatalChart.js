@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi, ELEMENTS, SIGN_SYMBOLS } from './api';
 import KundliChart from './KundliChart';
+import { HI } from './hi';
 
 const PLANET_LEGEND = [
   ['☉','Sun','#FF6B35'],['☽','Moon','#C8C8D0'],['♂','Mars','#FF4444'],
@@ -62,7 +63,7 @@ function getHouseInterpretation(houseNum, sign, planets) {
   };
 }
 
-const NatalChart = ({ birthDate, birthTime, latitude, longitude, timezone }) => {
+const NatalChart = ({ birthDate, birthTime, latitude, longitude, timezone, language = 'en' }) => {
   const [chart, setChart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -81,7 +82,7 @@ const NatalChart = ({ birthDate, birthTime, latitude, longitude, timezone }) => 
     try {
       const result = await astrologyApi.getNatalChart(
         birthDate, birthTime,
-        parseFloat(latitude), parseFloat(longitude), timezone
+        parseFloat(latitude), parseFloat(longitude), timezone, language
       );
       setChart(result);
     } catch (err) {
@@ -94,7 +95,7 @@ const NatalChart = ({ birthDate, birthTime, latitude, longitude, timezone }) => 
   if (!birthDate || !birthTime) {
     return (
       <div className="p-6 bg-gray-800 rounded-lg text-center">
-        <p className="text-gray-400">Please enter your birth details in the Profile tab first.</p>
+        <p className="text-gray-400">{language === 'hi' ? 'कृपया पहले प्रोफ़ाइल टैब में अपनी जन्म जानकारी दर्ज करें।' : 'Please enter your birth details in the Profile tab first.'}</p>
       </div>
     );
   }
@@ -110,20 +111,20 @@ const NatalChart = ({ birthDate, birthTime, latitude, longitude, timezone }) => 
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">🧿 Your Natal Chart</h2>
-      <p className="text-gray-400 mb-4">Based on: {birthDate} at {birthTime}</p>
+      <h2 className="text-2xl font-bold mb-4 text-white">🧿 {language === 'hi' ? 'आपकी जन्म कुंडली' : 'Your Natal Chart'}</h2>
+      <p className="text-gray-400 mb-4">{language === 'hi' ? 'आधारित:' : 'Based on:'} {birthDate} {language === 'hi' ? 'को' : 'at'} {birthTime}</p>
 
-      {loading && <p className="text-gray-400">Calculating your chart...</p>}
+      {loading && <p className="text-gray-400">{language === 'hi' ? 'आपकी कुंडली बन रही है...' : 'Calculating your chart...'}</p>}
       {error && <p className="text-red-400 mb-4">{error}</p>}
 
       {chart && !loading && (
         <div className="space-y-6">
           <div style={{display:'flex',gap:'8px',flexWrap:'wrap',marginBottom:'8px'}}>
             <button className={`btn btn-sm ${showChart ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setShowChart(true)}>
-              🏠 Kundli Chart
+              🏠 {language === 'hi' ? HI.kpChart : 'Kundli Chart'}
             </button>
             <button className={`btn btn-sm ${!showChart ? 'btn-primary' : 'btn-ghost'}`} onClick={() => setShowChart(false)}>
-              📋 Planet List
+              📋 {language === 'hi' ? HI.planets : 'Planet List'}
             </button>
           </div>
 
@@ -143,38 +144,38 @@ const NatalChart = ({ birthDate, birthTime, latitude, longitude, timezone }) => 
           {!showChart && (<>
           <div className="flex gap-4 flex-wrap justify-center">
             <div className="bg-gray-700 p-6 rounded-lg text-center min-w-32">
-              <p className="text-gray-400 text-sm">☀️ Sun Sign</p>
+              <p className="text-gray-400 text-sm">{language === 'hi' ? 'सूर्य राशि' : '☀️ Sun Sign'}</p>
               <p className="text-3xl text-yellow-400">{SIGN_SYMBOLS[chart.sun_sign]} {chart.sun_sign}</p>
               <p className="text-gray-500 text-sm">{ELEMENTS[chart.sun_sign]}</p>
             </div>
             <div className="bg-gray-700 p-6 rounded-lg text-center min-w-32">
-              <p className="text-gray-400 text-sm">🌙 Moon Sign</p>
+              <p className="text-gray-400 text-sm">{language === 'hi' ? 'चंद्र राशि' : '🌙 Moon Sign'}</p>
               <p className="text-3xl text-blue-400">{SIGN_SYMBOLS[chart.moon_sign]} {chart.moon_sign}</p>
             </div>
             <div className="bg-gray-700 p-6 rounded-lg text-center min-w-32">
-              <p className="text-gray-400 text-sm">⬆️ Rising Sign</p>
+              <p className="text-gray-400 text-sm">{language === 'hi' ? 'लग्न राशि' : '⬆️ Rising Sign'}</p>
               <p className="text-3xl text-purple-400">{SIGN_SYMBOLS[chart.rising_sign]} {chart.rising_sign}</p>
             </div>
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold text-white mb-3">🪐 Planetary Positions</h3>
+            <h3 className="text-xl font-semibold text-white mb-3">{language === 'hi' ? '🪐 ग्रह स्थितियां' : '🪐 Planetary Positions'}</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {Object.entries(chart.planets).map(([planet, data]) => (
                 <div key={planet} className="bg-gray-700 p-4 rounded-lg">
                   <p className="text-white font-medium text-lg">{planet}</p>
-                  <p className="text-gray-400">{SIGN_SYMBOLS[data.sign]} {data.sign} {data.degree.toFixed(1)}° House {data.house || '?'}</p>
+                  <p className="text-gray-400">{SIGN_SYMBOLS[data.sign]} {data.sign} {data.degree.toFixed(1)}° {language === 'hi' ? HI.house : 'House'} {data.house || '?'}</p>
                 </div>
               ))}
             </div>
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold text-white mb-3">🏠 Houses</h3>
+            <h3 className="text-xl font-semibold text-white mb-3">{language === 'hi' ? '🏠 भाव' : '🏠 Houses'}</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {Object.entries(chart.houses).map(([house, data]) => (
                 <div key={house} className="bg-gray-700 p-3 rounded text-center">
-                  <p className="text-gray-400 text-sm">House {house}</p>
+                  <p className="text-gray-400 text-sm">{language === 'hi' ? HI.house : 'House'} {house}</p>
                   <p className="text-white font-medium">{SIGN_SYMBOLS[data.sign]} {data.sign}</p>
                 </div>
               ))}
@@ -184,13 +185,13 @@ const NatalChart = ({ birthDate, birthTime, latitude, longitude, timezone }) => 
           {chart && (
             <div>
               <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:12}}>
-                <h3 className="text-xl font-semibold text-white" style={{margin:0}}>📖 House Interpretations</h3>
+                <h3 className="text-xl font-semibold text-white" style={{margin:0}}>📖 {language === 'hi' ? HI.houseInterpretations : 'House Interpretations'}</h3>
                 <button
                   className={`btn btn-xs ${showHouseInterpretations ? 'btn-primary' : 'btn-ghost'}`}
                   onClick={() => setShowHouseInterpretations(!showHouseInterpretations)}
                   style={{fontSize:11}}
                 >
-                  {showHouseInterpretations ? 'Hide' : 'Show'}
+                  {language === 'hi' ? (showHouseInterpretations ? 'छिपाएं' : 'दिखाएं') : (showHouseInterpretations ? 'Hide' : 'Show')}
                 </button>
               </div>
               {showHouseInterpretations && (
@@ -205,7 +206,7 @@ const NatalChart = ({ birthDate, birthTime, latitude, longitude, timezone }) => 
                       <div key={hNum} className="bg-gray-700/50 p-4 rounded-lg border-l-4" style={{borderLeftColor: hNum === 1 ? '#7C5CFC' : 'rgba(124,92,252,0.3)'}}>
                         <h4 className="text-white font-semibold mb-1">{interp.title}</h4>
                         <p className="text-gray-300 text-sm mb-1">{interp.summary}</p>
-                        <p className="text-gray-400 text-xs mb-1">Governs: {interp.topics}</p>
+                        <p className="text-gray-400 text-xs mb-1">{language === 'hi' ? 'विषय:' : 'Governs:'} {interp.topics}</p>
                         <p className="text-gray-500 text-xs">{interp.planets}</p>
                       </div>
                     );

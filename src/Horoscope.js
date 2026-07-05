@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi, ZODIAC_SIGNS, SIGN_SYMBOLS } from './api';
 import InlineAI from './InlineAI';
+import { HI } from './hi';
 
-const Horoscope = ({ sign: userSign, onUpdateContext, birthData }) => {
+const Horoscope = ({ sign: userSign, onUpdateContext, birthData, language = 'en' }) => {
   const [selectedSign, setSelectedSign] = useState(userSign || 'Aries');
   const [horoscope, setHoroscope] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -12,7 +13,7 @@ const Horoscope = ({ sign: userSign, onUpdateContext, birthData }) => {
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getHoroscope(sign || selectedSign);
+      const result = await astrologyApi.getHoroscope(sign || selectedSign, language);
       setHoroscope(result);
       if (onUpdateContext) {
         onUpdateContext({
@@ -49,7 +50,7 @@ const Horoscope = ({ sign: userSign, onUpdateContext, birthData }) => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">🌟 Daily Horoscope</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">🌟 {language === 'hi' ? HI.dailyHoroscope : 'Daily Horoscope'}</h2>
       {userSign && <p className="text-gray-400 mb-4">Your Sun Sign: {SIGN_SYMBOLS[userSign]} {userSign}</p>}
 
       <div className="mb-4">
@@ -103,14 +104,14 @@ const Horoscope = ({ sign: userSign, onUpdateContext, birthData }) => {
 
           {horoscope.best_timing && (
             <div className="bg-gray-800 p-3 rounded mb-4">
-              <span className="text-gray-400 text-sm">⏰ Best Timing: </span>
+              <span className="text-gray-400 text-sm">⏰ {language === 'hi' ? HI.bestWindow : 'Best Timing'}: </span>
               <span className="text-white">{horoscope.best_timing}</span>
             </div>
           )}
 
           {horoscope.preparation && (
             <div className="bg-indigo-900 p-3 rounded mb-4">
-              <span className="text-gray-400 text-sm">📋 Preparation: </span>
+              <span className="text-gray-400 text-sm">📋 {language === 'hi' ? HI.preparation : 'Preparation'}: </span>
               <span className="text-white">{horoscope.preparation}</span>
             </div>
           )}

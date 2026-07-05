@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
-function KPDasha({ birthDate: propBirthDate, birthTime: propBirthTime, latitude: propLat, longitude: propLng, timezone: propTz, onBack }) {
+function KPDasha({ birthDate: propBirthDate, birthTime: propBirthTime, latitude: propLat, longitude: propLng, timezone: propTz, onBack, language = 'en' }) {
   const [formData, setFormData] = useState({
     birthDate: propBirthDate || '',
     birthTime: propBirthTime || '',
@@ -46,7 +47,8 @@ function KPDasha({ birthDate: propBirthDate, birthTime: propBirthTime, latitude:
         formData.birthTime,
         formData.latitude,
         formData.longitude,
-        formData.timezone
+        formData.timezone,
+        language
       );
       setDasha(data);
     } catch (err) {
@@ -155,8 +157,8 @@ function KPDasha({ birthDate: propBirthDate, birthTime: propBirthTime, latitude:
   return (
     <div style={{ padding: '20px' }}>
       <div style={{display:'flex',alignItems:'center',marginBottom:16,gap:12}}>
-        {onBack && <button onClick={onBack} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.2)',color:'#fff',padding:'6px 14px',borderRadius:6,cursor:'pointer'}}>← Back</button>}
-        <h2 style={{color:'white',margin:0}}>KP Vimshottari Dasha</h2>
+        {onBack && <button onClick={onBack} style={{background:'transparent',border:'1px solid rgba(255,255,255,0.2)',color:'#fff',padding:'6px 14px',borderRadius:6,cursor:'pointer'}}>{language === 'hi' ? HI.back : '← Back'}</button>}
+        <h2 style={{color:'white',margin:0}}>{language === 'hi' ? HI.kpDasha : 'KP Vimshottari Dasha'}</h2>
       </div>
 
       <div style={styles.inputGroup}>
@@ -197,27 +199,27 @@ function KPDasha({ birthDate: propBirthDate, birthTime: propBirthTime, latitude:
 
       {dasha && (
         <div style={styles.result}>
-          <h3>Vimshottari Dasha Predictions</h3>
+          <h3>{language === 'hi' ? HI.kpDasha : 'Vimshottari Dasha Predictions'}</h3>
           <p><strong>Birth Date:</strong> {dasha.birth_date}</p>
-          <p><strong>Moon Nakshatra:</strong> {dasha.moon_nakshatra} (Lord: {dasha.moon_nakshatra_lord})</p>
-          <p><strong>Current Mahadasha:</strong> {dasha.current_dasha}</p>
+          <p><strong>{language === 'hi' ? HI.moonNakshatra : 'Moon Nakshatra'}:</strong> {dasha.moon_nakshatra} (Lord: {dasha.moon_nakshatra_lord})</p>
+          <p><strong>{language === 'hi' ? HI.currentDasha : 'Current Mahadasha'}:</strong> {dasha.current_dasha}</p>
 
           {dasha.current_dasha && dashaMeanings[dasha.current_dasha] && (
             <div style={styles.predictionBox}>
               <h4 style={{color:'#6c5ce7',marginBottom:12}}>🔮 {dasha.current_dasha} Mahadasha Predictions</h4>
-              <p style={{marginBottom:8}}><strong>Overall Energy:</strong> {dashaMeanings[dasha.current_dasha].effect}</p>
+              <p style={{marginBottom:8}}><strong>{language === 'hi' ? HI.overall : 'Overall'} Energy:</strong> {dashaMeanings[dasha.current_dasha].effect}</p>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginTop:12}}>
-                <div style={styles.predCard}><strong>💼 Career</strong><p>{dashaMeanings[dasha.current_dasha].career}</p></div>
-                <div style={styles.predCard}><strong>❤️ Love</strong><p>{dashaMeanings[dasha.current_dasha].love}</p></div>
-                <div style={styles.predCard}><strong>💰 Finance</strong><p>{dashaMeanings[dasha.current_dasha].finance}</p></div>
-                <div style={styles.predCard}><strong>🏥 Health</strong><p>{dashaMeanings[dasha.current_dasha].health}</p></div>
+                <div style={styles.predCard}><strong>💼 {language === 'hi' ? HI.career : 'Career'}</strong><p>{dashaMeanings[dasha.current_dasha].career}</p></div>
+                <div style={styles.predCard}><strong>❤️ {language === 'hi' ? HI.love : 'Love'}</strong><p>{dashaMeanings[dasha.current_dasha].love}</p></div>
+                <div style={styles.predCard}><strong>💰 {language === 'hi' ? HI.finance : 'Finance'}</strong><p>{dashaMeanings[dasha.current_dasha].finance}</p></div>
+                <div style={styles.predCard}><strong>🏥 {language === 'hi' ? HI.health : 'Health'}</strong><p>{dashaMeanings[dasha.current_dasha].health}</p></div>
               </div>
             </div>
           )}
 
           <p style={styles.message}>{dasha.message}</p>
 
-          <h4>Mahadasha Timeline</h4>
+          <h4>{language === 'hi' ? HI.mahadasha : 'Mahadasha'} Timeline</h4>
           <div style={styles.dashaGrid}>
             {dasha.dasha_sequence && dasha.dasha_sequence.map((mahadasha, idx) => (
               <div key={idx} style={{...styles.dashaCard, ...(mahadasha.mahadasha === dasha.current_dasha ? styles.activeDasha : {})}}>

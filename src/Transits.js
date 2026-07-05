@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
-const Transits = ({ latitude, longitude }) => {
+const Transits = ({ latitude, longitude, language = 'en' }) => {
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     latitude: latitude || '',
@@ -29,7 +30,8 @@ const Transits = ({ latitude, longitude }) => {
       const result = await astrologyApi.getTransits(
         formData.date,
         parseFloat(formData.latitude),
-        parseFloat(formData.longitude)
+        parseFloat(formData.longitude),
+        language
       );
       setTransits(result);
     } catch (err) {
@@ -51,13 +53,13 @@ const Transits = ({ latitude, longitude }) => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">🪐 Current Transits</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">🪐 {language === 'hi' ? HI.transits : 'Current Transits'}</h2>
       <p className="text-gray-400 mb-4">Showing planetary positions for: {formData.date}</p>
 
       <form onSubmit={handleSubmit} className="space-y-4 mb-6">
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block text-gray-300 mb-1">📅 Date</label>
+            <label className="block text-gray-300 mb-1">📅 {language === 'hi' ? 'तिथि' : 'Date'}</label>
             <input
               type="date"
               name="date"
@@ -67,7 +69,7 @@ const Transits = ({ latitude, longitude }) => {
             />
           </div>
           <div>
-            <label className="block text-gray-300 mb-1">📍 Latitude</label>
+            <label className="block text-gray-300 mb-1">📍 {language === 'hi' ? 'अक्षांश' : 'Latitude'}</label>
             <input
               type="number"
               name="latitude"

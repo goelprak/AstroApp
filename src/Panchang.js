@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
 const cities = ['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Ahmedabad', 'Jaipur', 'Lucknow', 'Chandigarh', 'Surat', 'Indore', 'Bhopal', 'Patna', 'Visakhapatnam', 'Coimbatore', 'Vadodara', 'Guwahati', 'Kanpur', 'Nagpur', 'Ludhiana', 'Bhubaneswar', 'Ranchi', 'Dehradun', 'Mysore', 'Jodhpur', 'Raipur', 'Faridabad', 'Gurgaon', 'Noida', 'Ghaziabad', 'Srinagar', 'Jammu', 'Panaji', 'Puducherry', 'Mangalore', 'Tirupathi', 'Madurai', 'Calicut', 'Ernakulam', 'Guntur', 'Warangal', 'Nellore'];
 
@@ -21,7 +22,7 @@ const cityCoords = {
   Warangal: { lat: 17.9784, lng: 79.5941 }, Nellore: { lat: 14.4426, lng: 79.9868 }
 };
 
-const Panchang = ({ onBack }) => {
+const Panchang = ({ onBack, language = 'en' }) => {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [city, setCity] = useState('Delhi');
   const [data, setData] = useState(null);
@@ -33,7 +34,7 @@ const Panchang = ({ onBack }) => {
     setError('');
     try {
       const coords = cityCoords[city] || { lat: 28.6139, lng: 77.2090 };
-      const result = await astrologyApi.getPanchang(date, coords.lat, coords.lng);
+      const result = await astrologyApi.getPanchang(date, coords.lat, coords.lng, language);
       setData(result);
     } catch (err) {
       setError(err.message || 'Failed to load Panchang');
@@ -45,8 +46,8 @@ const Panchang = ({ onBack }) => {
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
       <div style={{display:'flex',alignItems:'center',marginBottom:16,gap:12}}>
-        {onBack && <button onClick={onBack} className="btn btn-sm btn-ghost">← Back</button>}
-        <h2 className="text-2xl font-bold text-white">📅 Daily Panchang</h2>
+        {onBack && <button onClick={onBack} className="btn btn-sm btn-ghost">{language === 'hi' ? HI.back : '← Back'}</button>}
+        <h2 className="text-2xl font-bold text-white">📅 {language === 'hi' ? HI.panchang : 'Daily Panchang'}</h2>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -76,30 +77,30 @@ const Panchang = ({ onBack }) => {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-sm text-gray-400 mb-1">Tithi</h3>
+              <h3 className="text-sm text-gray-400 mb-1">{language === 'hi' ? HI.tithi : 'Tithi'}</h3>
               <p className="text-white font-bold">{data.tithi?.name}</p>
               <p className="text-gray-400 text-xs">{data.tithi?.start_time || ''} - {data.tithi?.end_time || ''}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-sm text-gray-400 mb-1">Yoga</h3>
+              <h3 className="text-sm text-gray-400 mb-1">{language === 'hi' ? HI.yoga : 'Yoga'}</h3>
               <p className="text-white font-bold">{data.yoga?.name}</p>
               <p className="text-gray-400 text-xs">{data.yoga?.description}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-sm text-gray-400 mb-1">Karana</h3>
+              <h3 className="text-sm text-gray-400 mb-1">{language === 'hi' ? HI.karana : 'Karana'}</h3>
               <p className="text-white font-bold">{data.karana?.name}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-sm text-gray-400 mb-1">Sunrise / Sunset</h3>
+              <h3 className="text-sm text-gray-400 mb-1">{language === 'hi' ? `${HI.sunrise} / ${HI.sunset}` : 'Sunrise / Sunset'}</h3>
               <p className="text-white">🌅 {data.sunrise || 'N/A'}</p>
               <p className="text-white">🌇 {data.sunset || 'N/A'}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-sm text-gray-400 mb-1">Rahu Kaal</h3>
+              <h3 className="text-sm text-gray-400 mb-1">{language === 'hi' ? HI.rahukaal : 'Rahu Kaal'}</h3>
               <p className="text-red-400 font-bold">{typeof data.rahu_kaal === 'string' ? data.rahu_kaal : data.rahu_kaal?.start + ' - ' + data.rahu_kaal?.end || 'N/A'}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-sm text-gray-400 mb-1">Abhijit Muhurat</h3>
+              <h3 className="text-sm text-gray-400 mb-1">{language === 'hi' ? HI.abhijit : 'Abhijit Muhurat'}</h3>
               <p className="text-green-400 font-bold">{typeof data.abhijit_muhurat === 'string' ? data.abhijit_muhurat : data.abhijit_muhurat?.start + ' - ' + data.abhijit_muhurat?.end || 'N/A'}</p>
             </div>
           </div>

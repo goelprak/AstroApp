@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
 const PLANET_COLORS = {
   Sun: '#FF6B35', Moon: '#C8C8D0', Mars: '#FF4444', Mercury: '#4ADE80',
   Jupiter: '#FFD700', Venus: '#FFB6C1', Saturn: '#6B8FFE', Rahu: '#CD853F', Ketu: '#9CA3AF'
 };
 
-const LifeTimeline = ({ birthDate, birthTime, latitude, longitude, timezone }) => {
+const LifeTimeline = ({ birthDate, birthTime, latitude, longitude, timezone, language = 'en' }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +22,7 @@ const LifeTimeline = ({ birthDate, birthTime, latitude, longitude, timezone }) =
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getLifeTimeline(birthDate, birthTime, latitude, longitude, timezone);
+      const result = await astrologyApi.getLifeTimeline(birthDate, birthTime, latitude, longitude, timezone, language);
       setData(result);
     } catch (err) {
       setError(err.message);
@@ -36,9 +37,9 @@ const LifeTimeline = ({ birthDate, birthTime, latitude, longitude, timezone }) =
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">⏳ Life Timeline</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">⏳ {language === 'hi' ? HI.lifeTimeline : 'Life Timeline'}</h2>
 
-      {loading && <p className="text-gray-400">Calculating your life timeline...</p>}
+      {loading && <p className="text-gray-400">{language === 'hi' ? HI.lifeTimeline : 'Calculating your life timeline...'}</p>}
       {error && <p className="text-red-400 mb-4">{error}</p>}
 
       {data && !loading && (
@@ -72,7 +73,7 @@ const LifeTimeline = ({ birthDate, birthTime, latitude, longitude, timezone }) =
 
           {data.life_stages && (
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-white mb-3">📋 Life Stages Summary</h3>
+              <h3 className="text-lg font-semibold text-white mb-3">📋 {language === 'hi' ? 'जीवन चरण सारांश' : 'Life Stages Summary'}</h3>
               <div className="grid grid-cols-2 gap-2">
                 {Object.entries(data.life_stages).map(([stage, desc]) => (
                   <div key={stage} className="bg-gray-600 p-3 rounded-lg">

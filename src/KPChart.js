@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
-function KPChart() {
+function KPChart({ language = 'en' }) {
   const [formData, setFormData] = useState({
     birthDate: '',
     birthTime: '',
@@ -27,11 +28,12 @@ function KPChart() {
         formData.birthTime,
         formData.latitude,
         formData.longitude,
-        formData.timezone
+        formData.timezone,
+        language
       );
       setChart(data);
     } catch (err) {
-      setError('Failed to calculate KP Chart');
+      setError(language === 'hi' ? 'KP चार्ट की गणना विफल' : 'Failed to calculate KP Chart');
     }
     setLoading(false);
   };
@@ -196,15 +198,15 @@ function KPChart() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{color: 'white'}}>KP (Krishnamurti Paddhati) Chart</h2>
+      <h2 style={{color: 'white'}}>{language === 'hi' ? HI.kpChart : 'KP (Krishnamurti Paddhati) Chart'}</h2>
       
       <div style={styles.inputGroup}>
-        <label style={{color: 'white', marginRight: '10px'}}>Birth Date:</label>
+        <label style={{color: 'white', marginRight: '10px'}}>{language === 'hi' ? HI.dateOfBirth : 'Birth Date:'}</label>
         <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} style={styles.input} />
       </div>
       
       <div style={styles.inputGroup}>
-        <label style={{color: 'white', marginRight: '10px'}}>Birth Time:</label>
+        <label style={{color: 'white', marginRight: '10px'}}>{language === 'hi' ? HI.timeOfBirth : 'Birth Time:'}</label>
         <input type="time" name="birthTime" value={formData.birthTime} onChange={handleChange} style={styles.input} />
       </div>
       
@@ -272,25 +274,25 @@ function KPChart() {
       )}
       
       <button onClick={calculate} disabled={loading} style={styles.button}>
-        {loading ? 'Calculating...' : 'Get KP Chart'}
+        {loading ? (language === 'hi' ? HI.kpChart : 'Calculating...') : `${language === 'hi' ? HI.kpChart : 'Get KP Chart'}`}
       </button>
       
       {error && <p style={styles.error}>{error}</p>}
       
       {chart && (
         <div style={styles.result}>
-          <h3>KP Chart Results</h3>
-          <p><strong>Birth Date:</strong> {chart.birth_date} | <strong>Time:</strong> {chart.birth_time}</p>
+          <h3>{language === 'hi' ? HI.kpChart : 'KP Chart Results'}</h3>
+          <p><strong>{language === 'hi' ? HI.dateOfBirth : 'Birth Date'}:</strong> {chart.birth_date} | <strong>{language === 'hi' ? HI.timeOfBirth : 'Time'}:</strong> {chart.birth_time}</p>
           
           <table style={styles.table}>
             <thead>
               <tr>
-                <th>Planet</th>
-                <th>Nakshatra</th>
-                <th>Lord</th>
-                <th>Sub Lord</th>
-                <th>Pada</th>
-                <th>Degree</th>
+                <th>{language === 'hi' ? HI.planet : 'Planet'}</th>
+                <th>{language === 'hi' ? HI.nakshatra : 'Nakshatra'}</th>
+                <th>{language === 'hi' ? HI.starLord : 'Lord'}</th>
+                <th>{language === 'hi' ? HI.subLord : 'Sub Lord'}</th>
+                <th>{language === 'hi' ? 'पद' : 'Pada'}</th>
+                <th>{language === 'hi' ? HI.degree : 'Degree'}</th>
               </tr>
             </thead>
             <tbody>
@@ -309,12 +311,12 @@ function KPChart() {
           
           {chart.significators && (
             <div style={styles.section}>
-              <h4>Significators</h4>
+              <h4>{language === 'hi' ? HI.significators : 'Significators'}</h4>
               {Object.entries(chart.significators).map(([planet, sig]) => (
                 <div key={planet} style={styles.sigBox}>
-                  <strong>{planet}</strong> - {sig.sign} | Nakshatra: {sig.nakshatra_lord}
+                  <strong>{planet}</strong> - {sig.sign} | {language === 'hi' ? HI.nakshatra : 'Nakshatra'}: {sig.nakshatra_lord}
                   <br />
-                  <small>Significators: {sig.significators.join(', ')}</small>
+                  <small>{language === 'hi' ? HI.significators : 'Significators'}: {sig.significators.join(', ')}</small>
                 </div>
               ))}
             </div>

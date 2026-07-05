@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
-const Muhurat = () => {
+const Muhurat = ({ language = 'en' }) => {
   const [muhurat, setMuhurat] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -14,7 +15,7 @@ const Muhurat = () => {
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getMuhurat(date, city);
+      const result = await astrologyApi.getMuhurat(date, city, language);
       setMuhurat(result);
     } catch (err) {
       setError(err.message);
@@ -25,7 +26,7 @@ const Muhurat = () => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">🕐 Daily Muhurat (Auspicious Timing)</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">🕐 {language === 'hi' ? HI.muhurat : 'Daily Muhurat (Auspicious Timing)'}</h2>
       
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div>
@@ -54,7 +55,7 @@ const Muhurat = () => {
         disabled={loading}
         className="w-full py-3 bg-purple-600 text-white rounded-lg font-bold disabled:opacity-50"
       >
-        {loading ? 'Calculating...' : '🕐 Get Today\'s Muhurat'}
+        {loading ? `🕐 ${language === 'hi' ? HI.muhurat : 'Calculating...'}` : `🕐 ${language === 'hi' ? HI.muhurat : "Get Today's Muhurat"}`}
       </button>
 
       {error && <p className="text-red-400 mt-4">{error}</p>}
@@ -67,7 +68,7 @@ const Muhurat = () => {
           </div>
 
           <div className="bg-gray-700 p-4 rounded-lg">
-            <h3 className="text-xl font-semibold text-green-400 mb-3">✅ Auspicious Muhurats</h3>
+            <h3 className="text-xl font-semibold text-green-400 mb-3">✅ {language === 'hi' ? HI.auspiciousTime : 'Auspicious Muhurats'}</h3>
             <div className="space-y-3">
               {muhurat.muhurats.map((m, i) => (
                 <div key={i} className="bg-gray-600 p-3 rounded-lg">
@@ -80,16 +81,16 @@ const Muhurat = () => {
           </div>
 
           <div className="bg-red-900 p-4 rounded-lg">
-            <h3 className="text-xl font-semibold text-red-300 mb-3">❌ Avoid These Times</h3>
+            <h3 className="text-xl font-semibold text-red-300 mb-3">❌ {language === 'hi' ? 'इन समय से बचें' : 'Avoid These Times'}</h3>
             <div className="space-y-2">
-              <p className="text-gray-300">⛔ Rahu Kalam: {muhurat.avoid.rahu_kalam}</p>
+              <p className="text-gray-300">⛔ {language === 'hi' ? HI.rahukaal : 'Rahu Kalam'}: {muhurat.avoid.rahu_kalam}</p>
               <p className="text-gray-300">⛔ Yamaganda: {muhurat.avoid.yamaganda}</p>
               <p className="text-gray-300">⛔ Gulikai Kalam: {muhurat.avoid.gulikai_kalam}</p>
             </div>
           </div>
 
           <div className="bg-blue-900 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-white mb-2">💡 Advice</h3>
+            <h3 className="text-lg font-semibold text-white mb-2">💡 {language === 'hi' ? HI.advice : 'Advice'}</h3>
             <p className="text-gray-300">{muhurat.advice}</p>
           </div>
         </div>

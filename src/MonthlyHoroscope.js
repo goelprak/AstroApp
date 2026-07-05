@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
 import InlineAI from './InlineAI';
+import { HI } from './hi';
 
-const MonthlyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
+const MonthlyHoroscope = ({ userSign, onUpdateContext, birthData, language = 'en' }) => {
   const [sign, setSign] = useState(userSign || 'Aries');
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -16,7 +17,7 @@ const MonthlyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getMonthlyHoroscope(sign, year, month);
+      const result = await astrologyApi.getMonthlyHoroscope(sign, year, month, language);
       setHoroscope(result);
       if (onUpdateContext) {
         onUpdateContext({
@@ -50,7 +51,7 @@ const MonthlyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">📆 Monthly Horoscope</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">📆 {language === 'hi' ? HI.monthlyHoroscope : 'Monthly Horoscope'}</h2>
       
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div>
@@ -114,16 +115,16 @@ const MonthlyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
           {horoscope.reasoning && <p className="text-gray-400 italic text-center">{horoscope.reasoning}</p>}
 
           <div className="bg-purple-900 p-6 rounded-lg text-center">
-            <p className="text-gray-400 text-sm">🌟 Theme</p>
+            <p className="text-gray-400 text-sm">🌟 {language === 'hi' ? HI.theme : 'Theme'}</p>
             <p className="text-2xl text-white font-bold">{horoscope.theme}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             {[
-              { key: 'career', label: '💼 Career', badge: 'bg-green-600', color: 'text-green-400' },
-              { key: 'love', label: '💕 Love', badge: 'bg-pink-600', color: 'text-pink-400' },
-              { key: 'finance', label: '💰 Finance', badge: 'bg-yellow-600', color: 'text-yellow-400' },
-              { key: 'health', label: '❤️ Health', badge: 'bg-blue-600', color: 'text-blue-400' }
+              { key: 'career', label: language === 'hi' ? `💼 ${HI.career}` : '💼 Career', badge: 'bg-green-600', color: 'text-green-400' },
+              { key: 'love', label: language === 'hi' ? `💕 ${HI.love}` : '💕 Love', badge: 'bg-pink-600', color: 'text-pink-400' },
+              { key: 'finance', label: language === 'hi' ? `💰 ${HI.finance}` : '💰 Finance', badge: 'bg-yellow-600', color: 'text-yellow-400' },
+              { key: 'health', label: language === 'hi' ? `❤️ ${HI.health}` : '❤️ Health', badge: 'bg-blue-600', color: 'text-blue-400' }
             ].map(({ key, label, badge, color }) => (
               <div key={key} className="bg-gray-700 p-4 rounded-lg">
                 <h3 className={`text-lg font-semibold ${color} mb-2`}>
@@ -145,11 +146,11 @@ const MonthlyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
 
           <div className="flex gap-4 justify-center text-center bg-gray-700 p-4 rounded-lg">
             <div>
-              <p className="text-gray-400 text-sm">⭐ Highlights</p>
+              <p className="text-gray-400 text-sm">⭐ {language === 'hi' ? HI.highlights : 'Highlights'}</p>
               <p className="text-gray-300">{horoscope.highlights}</p>
             </div>
             <div>
-              <p className="text-gray-400 text-sm">⚠️ Challenges</p>
+              <p className="text-gray-400 text-sm">⚠️ {language === 'hi' ? HI.challenges : 'Challenges'}</p>
               <p className="text-gray-300">{horoscope.challenges}</p>
             </div>
           </div>
@@ -160,14 +161,14 @@ const MonthlyHoroscope = ({ userSign, onUpdateContext, birthData }) => {
           </div>
           {horoscope.best_window && (
             <div className="bg-gray-800 p-3 rounded">
-              <span className="text-gray-400 text-sm">⏰ Best Window: </span>
+              <span className="text-gray-400 text-sm">⏰ {language === 'hi' ? HI.bestWindow : 'Best Window'}: </span>
               <span className="text-white">{horoscope.best_window}</span>
             </div>
           )}
 
           {horoscope.preparation && (
             <div className="bg-indigo-900 p-3 rounded">
-              <span className="text-gray-400 text-sm">📋 Preparation: </span>
+              <span className="text-gray-400 text-sm">📋 {language === 'hi' ? HI.preparation : 'Preparation'}: </span>
               <span className="text-white">{horoscope.preparation}</span>
             </div>
           )}

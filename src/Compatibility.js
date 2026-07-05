@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { astrologyApi, SIGN_SYMBOLS } from './api';
+import { HI } from './hi';
 
 const DEFAULT_LOCATION = { lat: 28.6139, lng: 77.2090 };
 
-const Compatibility = ({ profile, location }) => {
+const Compatibility = ({ profile, location, language = 'en' }) => {
   const [person1, setPerson1] = useState({
     name: profile?.name || '',
     birthDate: profile?.birthDate || '',
@@ -37,7 +38,8 @@ const Compatibility = ({ profile, location }) => {
       person.birthTime,
       parseFloat(person.latitude || loc?.lat || DEFAULT_LOCATION.lat),
       parseFloat(person.longitude || loc?.lng || DEFAULT_LOCATION.lng),
-      'Asia/Kolkata'
+      'Asia/Kolkata',
+      language
     );
   };
 
@@ -50,7 +52,7 @@ const Compatibility = ({ profile, location }) => {
         calculateCharts(person1, location),
         calculateCharts(person2, location)
       ]);
-      const compatibility = await astrologyApi.getCompatibility(chart1, chart2);
+      const compatibility = await astrologyApi.getCompatibility(chart1, chart2, language);
       setResult({
         ...compatibility,
         person1: { name: person1.name, sun: chart1.sun_sign, moon: chart1.moon_sign, rising: chart1.rising_sign },
@@ -78,7 +80,7 @@ const Compatibility = ({ profile, location }) => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">💕 Compatibility</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">💕 {language === 'hi' ? HI.compatibility : 'Compatibility'}</h2>
       
       {step === 1 && (
         <div className="space-y-6">
@@ -171,7 +173,7 @@ const Compatibility = ({ profile, location }) => {
               disabled={loading || !person2.birthDate || !person2.birthTime}
               className="flex-1 py-3 bg-pink-600 text-white rounded-lg font-bold disabled:opacity-50"
             >
-              {loading ? 'Calculating...' : '💕 Check Compatibility'}
+              {loading ? 'Calculating...' : `💕 ${language === 'hi' ? HI.compatibility : 'Check Compatibility'}`}
             </button>
           </div>
         </form>
@@ -182,7 +184,7 @@ const Compatibility = ({ profile, location }) => {
       {result && step === 3 && (
         <div className="space-y-6">
           <div className="text-center bg-gray-700 p-8 rounded-lg">
-            <p className="text-gray-400 mb-2">Compatibility Score</p>
+            <p className="text-gray-400 mb-2">{language === 'hi' ? HI.overallScore : 'Compatibility Score'}</p>
             <p className={`text-7xl font-bold ${getScoreColor(result.score)}`}>{result.score}%</p>
             <p className="text-white text-xl mt-4">{getScoreMessage(result.score)}</p>
           </div>
@@ -243,7 +245,7 @@ const Compatibility = ({ profile, location }) => {
             onClick={() => { setStep(1); setResult(null); }}
             className="w-full py-3 bg-gray-600 text-white rounded-lg"
           >
-            🔄 Check Another Match
+            🔄 {language === 'hi' ? HI.compatibility : 'Check Another Match'}
           </button>
         </div>
       )}

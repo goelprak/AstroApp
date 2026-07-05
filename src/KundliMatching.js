@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { astrologyApi, SIGN_SYMBOLS } from './api';
+import { HI } from './hi';
 
 const DEFAULT_LOCATION = { lat: 28.6139, lng: 77.2090 };
 
-const KundliMatching = ({ profile, location }) => {
+const KundliMatching = ({ profile, location, language = 'en' }) => {
   const [person1, setPerson1] = useState({
     name: profile?.name || '',
     birthDate: profile?.birthDate || '',
@@ -25,7 +26,8 @@ const KundliMatching = ({ profile, location }) => {
       person.birthTime,
       location?.lat || DEFAULT_LOCATION.lat,
       location?.lng || DEFAULT_LOCATION.lng,
-      'Asia/Kolkata'
+      'Asia/Kolkata',
+      language
     );
   };
 
@@ -39,8 +41,8 @@ const KundliMatching = ({ profile, location }) => {
         calculateCharts(person2)
       ]);
       const [matching, manglik] = await Promise.all([
-        astrologyApi.getKundliMatching(chart1, chart2),
-        astrologyApi.getManglik(chart1, chart2)
+        astrologyApi.getKundliMatching(chart1, chart2, language),
+        astrologyApi.getManglik(chart1, null, language)
       ]);
       setResult({
         ...matching,
@@ -71,7 +73,7 @@ const KundliMatching = ({ profile, location }) => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">💍 Kundli Matching (36 Guna)</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">💍 {language === 'hi' ? HI.kundliMatching : 'Kundli Matching (36 Guna)'}</h2>
       
       {step === 1 && (
         <div className="space-y-6">
@@ -162,7 +164,7 @@ const KundliMatching = ({ profile, location }) => {
               disabled={loading || !person2.birthDate || !person2.birthTime}
               className="flex-1 py-3 bg-pink-600 text-white rounded-lg font-bold disabled:opacity-50"
             >
-              {loading ? 'Matching...' : '💍 Match Kundli'}
+              {loading ? (language === 'hi' ? HI.kundliMatching : 'Matching...') : `💍 ${language === 'hi' ? HI.kundliMatching : 'Match Kundli'}`}
             </button>
           </div>
         </form>
@@ -175,7 +177,7 @@ const KundliMatching = ({ profile, location }) => {
           <div className={`text-center p-8 rounded-lg ${getResultColor(result.percentage)}`}>
             <p className="text-7xl font-bold text-white mb-2">{result.percentage}%</p>
             <p className="text-xl text-white">{result.result}</p>
-            <p className="text-white mt-2">{result.obtained_gunas} / {result.total_gunas} Gunas</p>
+            <p className="text-white mt-2">{result.obtained_gunas} / {result.total_gunas} {language === 'hi' ? HI.guna : 'Gunas'}</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
@@ -192,7 +194,7 @@ const KundliMatching = ({ profile, location }) => {
           </div>
 
           <div className="bg-gray-700 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-white mb-3">📊 Guna Breakdown</h3>
+            <h3 className="text-lg font-semibold text-white mb-3">📊 {language === 'hi' ? HI.gunaMilaan : 'Guna Breakdown'}</h3>
             <div className="space-y-2">
               {Object.entries(result.details).map(([key, data]) => (
                 <div key={key} className="flex justify-between items-center bg-gray-600 p-3 rounded">
@@ -208,19 +210,19 @@ const KundliMatching = ({ profile, location }) => {
           {result.manglik && (
             <div className={`p-4 rounded-lg ${result.manglik.is_manglik ? 'bg-red-900' : 'bg-green-900'}`}>
               <h3 className="text-lg font-semibold text-white mb-2">
-                {result.manglik.is_manglik ? '🔥 Manglik Dosha Detected' : '✅ No Manglik Dosha'}
+                {result.manglik.is_manglik ? `🔥 ${language === 'hi' ? HI.manglikDosha : 'Manglik Dosha Detected'}` : `✅ ${language === 'hi' ? HI.manglikDosha : 'No Manglik Dosha'}`}
               </h3>
               {result.manglik.is_manglik && (
                 <div className="space-y-2">
-                  <p className="text-white">Dosha Level: <strong>{result.manglik.dosha_level}</strong></p>
-                  <p className="text-gray-300">Mars in houses: {result.manglik.house_placements?.join(', ') || '?'}</p>
+                  <p className="text-white">{language === 'hi' ? 'दोष स्तर' : 'Dosha Level'}: <strong>{result.manglik.dosha_level}</strong></p>
+                  <p className="text-gray-300">{language === 'hi' ? 'मंगल भाव में' : 'Mars in houses'}: {result.manglik.house_placements?.join(', ') || '?'}</p>
                   <p className="text-gray-300">{result.manglik.description}</p>
                 </div>
               )}
               {result.manglik.chart2 && (
                 <div className="mt-2 p-2 bg-black bg-opacity-20 rounded">
                   <p className="text-gray-300">
-                    👩 Partner: {result.manglik.chart2.is_manglik ? '🔥 Manglik' : '✅ Non-Manglik'} ({result.manglik.chart2.dosha_level})
+                    {language === 'hi' ? '👩 साथी' : '👩 Partner'}: {result.manglik.chart2.is_manglik ? `🔥 ${HI.manglik}` : `✅ ${language === 'hi' ? 'गैर-मांगलिक' : 'Non-Manglik'}`} ({result.manglik.chart2.dosha_level})
                   </p>
                 </div>
               )}
@@ -228,7 +230,7 @@ const KundliMatching = ({ profile, location }) => {
           )}
 
           <div className="bg-blue-900 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-white mb-2">💡 Advice</h3>
+            <h3 className="text-lg font-semibold text-white mb-2">💡 {language === 'hi' ? HI.advice : 'Advice'}</h3>
             <p className="text-gray-300">{result.advice}</p>
           </div>
 
@@ -236,7 +238,7 @@ const KundliMatching = ({ profile, location }) => {
             onClick={() => { setStep(1); setResult(null); }}
             className="w-full py-3 bg-gray-600 text-white rounded-lg"
           >
-            🔄 Match Again
+            🔄 {language === 'hi' ? HI.kundliMatching : 'Match Again'}
           </button>
         </div>
       )}

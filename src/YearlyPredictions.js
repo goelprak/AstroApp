@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
 import InlineAI from './InlineAI';
+import { HI } from './hi';
 
-function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone, onUpdateContext, birthData }) {
+function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone, onUpdateContext, birthData, language = 'en' }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,7 +22,7 @@ function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone
     setLoading(true);
     setError(null);
     try {
-      const result = await astrologyApi.getYearlyPredictions(birthDate, birthTime, latitude, longitude, timezone, 10);
+      const result = await astrologyApi.getYearlyPredictions(birthDate, birthTime, latitude, longitude, timezone, 10, language);
       setData(result);
       if (result.predictions && result.predictions.length > 0) {
         setSelectedYear(result.predictions[0].year);
@@ -88,7 +89,7 @@ function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone
       )}
       {data?.best_window && (
         <div style={{ color: '#68d391', fontSize: '12px', marginBottom: '4px' }}>
-          <span style={{ fontWeight: 'bold' }}>Best window:</span> {data.best_window}
+          <span style={{ fontWeight: 'bold' }}>{language === 'hi' ? HI.bestWindow : 'Best window'}:</span> {data.best_window}
         </div>
       )}
       {data?.preparation && (
@@ -100,7 +101,7 @@ function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone
           marginTop: '4px',
           fontStyle: 'italic'
         }}>
-          <span style={{ fontWeight: 'bold' }}>Preparation:</span> {data.preparation}
+          <span style={{ fontWeight: 'bold' }}>{language === 'hi' ? HI.preparation : 'Preparation'}:</span> {data.preparation}
         </div>
       )}
     </div>
@@ -109,7 +110,7 @@ function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone
   if (loading) {
     return (
       <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ color: 'white', marginBottom: '20px' }}>🔮 10-Year Predictions</h2>
+        <h2 style={{ color: 'white', marginBottom: '20px' }}>🔮 {language === 'hi' ? HI.yearlyPredictions : '10-Year Predictions'}</h2>
         <div style={{ color: '#6c5ce7', fontSize: '18px' }}>Calculating your future... 🔮</div>
       </div>
     );
@@ -118,7 +119,7 @@ function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone
   if (error) {
     return (
       <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
-        <h2 style={{ color: 'white', marginBottom: '20px' }}>🔮 10-Year Predictions</h2>
+        <h2 style={{ color: 'white', marginBottom: '20px' }}>🔮 {language === 'hi' ? HI.yearlyPredictions : '10-Year Predictions'}</h2>
         <div style={{ color: '#fc8181', background: '#2d3748', padding: '20px', borderRadius: '10px' }}>
           {error}
         </div>
@@ -137,7 +138,7 @@ function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone
         {data.chart_summary && (
           <span>
             {data.chart_summary.sun_sign} Sun · {data.chart_summary.moon_sign} Moon · {data.chart_summary.rising_sign} Rising
-            {data.moon_nakshatra && ` · ${data.moon_nakshatra} Nakshatra`}
+            {data.moon_nakshatra && ` · ${data.moon_nakshatra} ${language === 'hi' ? HI.nakshatra : 'Nakshatra'}`}
           </span>
         )}
       </div>
@@ -213,7 +214,7 @@ function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone
           </div>
 
           <div style={{ marginBottom: '15px' }}>
-            <div style={{ fontSize: '14px', color: '#6c5ce7', marginBottom: '5px' }}>Cosmic Theme</div>
+            <div style={{ fontSize: '14px', color: '#6c5ce7', marginBottom: '5px' }}>{language === 'hi' ? HI.theme : 'Cosmic Theme'}</div>
             <div style={{ fontSize: '16px', color: 'white', fontStyle: 'italic' }}>
               {getPlanetEmoji(selectedPred.mahadasha)} {selectedPred.mahadasha} Mahadasha · {selectedPred.antardasha} Antardasha
             </div>
@@ -223,10 +224,10 @@ function YearlyPredictions({ birthDate, birthTime, latitude, longitude, timezone
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-            {renderCategoryCard('Career', '#48bb78', '💼', selectedPred.career)}
-            {renderCategoryCard('Love', '#fc8181', '❤️', selectedPred.love)}
-            {renderCategoryCard('Finance', '#ecc94b', '💰', selectedPred.finance)}
-            {renderCategoryCard('Health', '#63b3ed', '🏥', selectedPred.health)}
+            {renderCategoryCard(language === 'hi' ? HI.career : 'Career', '#48bb78', '💼', selectedPred.career)}
+            {renderCategoryCard(language === 'hi' ? HI.love : 'Love', '#fc8181', '❤️', selectedPred.love)}
+            {renderCategoryCard(language === 'hi' ? HI.finance : 'Finance', '#ecc94b', '💰', selectedPred.finance)}
+            {renderCategoryCard(language === 'hi' ? HI.health : 'Health', '#63b3ed', '🏥', selectedPred.health)}
           </div>
         </div>
       )}

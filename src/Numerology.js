@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
 import InlineAI from './InlineAI';
+import { HI } from './hi';
 
-const Numerology = ({ name, birthDate, onUpdateContext, birthData }) => {
+const Numerology = ({ name, birthDate, onUpdateContext, birthData, language = 'en' }) => {
   const [numerology, setNumerology] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -14,7 +15,7 @@ const Numerology = ({ name, birthDate, onUpdateContext, birthData }) => {
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getNumerology(inputName, inputDate);
+      const result = await astrologyApi.getNumerology(inputName, inputDate, language);
       setNumerology(result);
       if (onUpdateContext) {
         onUpdateContext({
@@ -54,7 +55,7 @@ const Numerology = ({ name, birthDate, onUpdateContext, birthData }) => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">🔢 Numerology Report</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">🔢 {language === 'hi' ? HI.numerology : 'Numerology Report'}</h2>
       
       <div className="space-y-4 mb-6">
         <div>
@@ -91,46 +92,46 @@ const Numerology = ({ name, birthDate, onUpdateContext, birthData }) => {
         <div className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-gray-700 p-4 rounded-lg text-center">
-              <p className="text-gray-400 text-sm">Life Path</p>
+              <p className="text-gray-400 text-sm">{language === 'hi' ? HI.lifePath : 'Life Path'}</p>
               <p className={`text-4xl font-bold ${getNumberColor(numerology.life_path)}`}>{numerology.life_path}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg text-center">
-              <p className="text-gray-400 text-sm">Destiny</p>
+              <p className="text-gray-400 text-sm">{language === 'hi' ? HI.destiny : 'Destiny'}</p>
               <p className={`text-4xl font-bold ${getNumberColor(numerology.destiny)}`}>{numerology.destiny}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg text-center">
-              <p className="text-gray-400 text-sm">Soul Urge</p>
+              <p className="text-gray-400 text-sm">{language === 'hi' ? HI.soulUrge : 'Soul Urge'}</p>
               <p className={`text-4xl font-bold ${getNumberColor(numerology.soul_urge)}`}>{numerology.soul_urge}</p>
             </div>
             <div className="bg-gray-700 p-4 rounded-lg text-center">
-              <p className="text-gray-400 text-sm">Personality</p>
+              <p className="text-gray-400 text-sm">{language === 'hi' ? HI.personality : 'Personality'}</p>
               <p className={`text-4xl font-bold ${getNumberColor(numerology.personality)}`}>{numerology.personality}</p>
             </div>
           </div>
 
           <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg">
-            <h3 className="text-xl font-semibold text-white mb-3">🌟 Life Path: {numerology.life_path}</h3>
+            <h3 className="text-xl font-semibold text-white mb-3">🌟 {language === 'hi' ? HI.lifePath : 'Life Path'}: {numerology.life_path}</h3>
             <p className="text-gray-300 text-lg">{numerology.life_path_meaning}</p>
           </div>
 
           <div className="bg-gray-700 p-6 rounded-lg">
-            <h3 className="text-xl font-semibold text-white mb-3">✨ Destiny: {numerology.destiny}</h3>
+            <h3 className="text-xl font-semibold text-white mb-3">✨ {language === 'hi' ? HI.destiny : 'Destiny'}: {numerology.destiny}</h3>
             <p className="text-gray-300">{numerology.destiny_meaning}</p>
           </div>
 
           <div className="bg-gray-700 p-6 rounded-lg">
-            <h3 className="text-xl font-semibold text-white mb-3">💫 Soul Urge: {numerology.soul_urge}</h3>
+            <h3 className="text-xl font-semibold text-white mb-3">💫 {language === 'hi' ? HI.soulUrge : 'Soul Urge'}: {numerology.soul_urge}</h3>
             <p className="text-gray-300">{numerology.soul_urge_meaning}</p>
           </div>
 
           <div className="bg-gray-700 p-6 rounded-lg">
-            <h3 className="text-xl font-semibold text-white mb-3">🎭 Personality: {numerology.personality}</h3>
+            <h3 className="text-xl font-semibold text-white mb-3">🎭 {language === 'hi' ? HI.personality : 'Personality'}: {numerology.personality}</h3>
             <p className="text-gray-300">{numerology.personality_meaning}</p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h4 className="text-gray-400 text-sm">Birth Day</h4>
+              <h4 className="text-gray-400 text-sm">{language === 'hi' ? HI.birthDay : 'Birth Day'}</h4>
               <p className={`text-2xl font-bold ${getNumberColor(numerology.birth_day)}`}>{numerology.birth_day}</p>
               <p className="text-gray-400 text-xs mt-1">{numerology.birth_day_meaning}</p>
             </div>
@@ -147,9 +148,9 @@ const Numerology = ({ name, birthDate, onUpdateContext, birthData }) => {
           </div>
 
           <div className="bg-blue-900 p-6 rounded-lg">
-            <h3 className="text-xl font-semibold text-white mb-3">📅 This Year: {numerology.personal_year}</h3>
+            <h3 className="text-xl font-semibold text-white mb-3">📅 {language === 'hi' ? HI.year : 'This Year'}: {numerology.personal_year}</h3>
             <p className="text-gray-300">{numerology.personal_year_meaning}</p>
-            <p className="text-gray-400 text-sm mt-2">Theme: {numerology.yearly_theme}</p>
+            <p className="text-gray-400 text-sm mt-2">{language === 'hi' ? HI.theme : 'Theme'}: {numerology.yearly_theme}</p>
           </div>
 
           <div className="bg-gray-700 p-4 rounded-lg">

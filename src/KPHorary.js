@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
-function KPHorary() {
+function KPHorary({ language = 'en' }) {
   const [formData, setFormData] = useState({
     question: '',
     questionDate: new Date().toISOString().split('T')[0],
@@ -27,11 +28,12 @@ function KPHorary() {
         formData.questionDate,
         formData.questionTime,
         formData.latitude,
-        formData.longitude
+        formData.longitude,
+        language
       );
       setResult(data);
     } catch (err) {
-      setError('Failed to calculate Horary Chart');
+      setError(language === 'hi' ? 'होररी चार्ट की गणना विफल' : 'Failed to calculate Horary Chart');
     }
     setLoading(false);
   };
@@ -138,11 +140,11 @@ function KPHorary() {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{color: 'white'}}>KP Horary Astrology</h2>
-      <p style={styles.info}>Ask any question and get answer based on Krishnamurti Paddhati system</p>
+      <h2 style={{color: 'white'}}>{language === 'hi' ? HI.kpHorary : 'KP Horary Astrology'}</h2>
+      <p style={styles.info}>{language === 'hi' ? 'कोई भी प्रश्न पूछें और कृष्णमूर्ति पद्धति पर आधारित उत्तर प्राप्त करें' : 'Ask any question and get answer based on Krishnamurti Paddhati system'}</p>
       
       <div style={styles.inputGroup}>
-        <label style={{color: 'white', marginRight: '10px'}}>Your Question:</label>
+        <label style={{color: 'white', marginRight: '10px'}}>{language === 'hi' ? HI.question : 'Your Question:'}</label>
         <input 
           type="text" 
           name="question" 
@@ -154,7 +156,7 @@ function KPHorary() {
       </div>
       
       <div style={styles.exampleSection}>
-        <p style={{color: 'white'}}>Try:</p>
+        <p style={{color: 'white'}}>{language === 'hi' ? 'प्रयास करें:' : 'Try:'}</p>
         {exampleQuestions.map((q, idx) => (
           <button key={idx} onClick={() => setFormData({...formData, question: q})} style={styles.exampleBtn}>
             {q}
@@ -164,17 +166,17 @@ function KPHorary() {
       
       <div style={styles.row}>
         <div style={styles.inputGroup}>
-          <label style={{color: 'white', marginRight: '10px'}}>Question Date:</label>
+          <label style={{color: 'white', marginRight: '10px'}}>{language === 'hi' ? 'प्रश्न तिथि' : 'Question Date:'}</label>
           <input type="date" name="questionDate" value={formData.questionDate} onChange={handleChange} style={styles.input} />
         </div>
         
         <div style={styles.inputGroup}>
-          <label style={{color: 'white', marginRight: '10px'}}>Question Time:</label>
+          <label style={{color: 'white', marginRight: '10px'}}>{language === 'hi' ? 'प्रश्न समय' : 'Question Time:'}</label>
           <input type="time" name="questionTime" value={formData.questionTime} onChange={handleChange} style={styles.input} />
         </div>
         
         <div style={styles.inputGroup}>
-          <label style={{color: 'white', marginRight: '10px'}}>Location:</label>
+          <label style={{color: 'white', marginRight: '10px'}}>{language === 'hi' ? 'स्थान' : 'Location:'}</label>
           <select onChange={handleCityChange} style={styles.input} value={customCity ? '__custom__' : (formData.latitude === 28.6139 ? 'Delhi' : formData.latitude === 19.0760 ? 'Mumbai' : '')}>
             <option value="">Select City</option>
             {cities.map(city => (
@@ -238,17 +240,17 @@ function KPHorary() {
       )}
       
       <button onClick={calculate} disabled={loading} style={styles.button}>
-        {loading ? 'Analyzing...' : 'Get Answer'}
+        {loading ? (language === 'hi' ? HI.kpHorary : 'Analyzing...') : `${language === 'hi' ? HI.answer : 'Get Answer'}`}
       </button>
       
       {error && <p style={styles.error}>{error}</p>}
       
       {result && (
         <div style={styles.result}>
-          <h3>Analysis Result</h3>
+          <h3>{language === 'hi' ? HI.kpHorary : 'Analysis Result'}</h3>
           
           <div style={styles.chartBox}>
-            <h4>Horary Chart Details</h4>
+            <h4>{language === 'hi' ? 'होररी चार्ट विवरण' : 'Horary Chart Details'}</h4>
             <p><strong>Question:</strong> {result.question}</p>
             <p><strong>Ascendant Sign:</strong> {result.ascendant_sign}</p>
             <p><strong>Ascendant Nakshatra:</strong> {result.ascendant_nakshatra}</p>
@@ -257,24 +259,24 @@ function KPHorary() {
           </div>
           
           <div style={styles.answerBox}>
-            <h4>Answer</h4>
-            <p><strong>Topic:</strong> {result.answer.topic}</p>
-            <p><strong>Important House:</strong> {result.answer.key_house}</p>
-            <p><strong>Significators:</strong> {result.answer.significators}</p>
-            <p><strong>Analysis:</strong> {result.answer.analysis}</p>
-            <p style={styles.verdict}><strong>Verdict:</strong> {result.answer.verdict}</p>
+            <h4>{language === 'hi' ? HI.answer : 'Answer'}</h4>
+            <p><strong>{language === 'hi' ? 'विषय' : 'Topic'}:</strong> {result.answer.topic}</p>
+            <p><strong>{language === 'hi' ? 'मुख्य भाव' : 'Important House'}:</strong> {result.answer.key_house}</p>
+            <p><strong>{language === 'hi' ? HI.significators : 'Significators'}:</strong> {result.answer.significators}</p>
+            <p><strong>{language === 'hi' ? 'विश्लेषण' : 'Analysis'}:</strong> {result.answer.analysis}</p>
+            <p style={styles.verdict}><strong>{language === 'hi' ? 'निर्णय' : 'Verdict'}:</strong> {result.answer.verdict}</p>
           </div>
           
           <div style={styles.chartDetails}>
-            <h4>Planet Positions</h4>
+            <h4>{language === 'hi' ? HI.planets : 'Planet Positions'}</h4>
             <table style={styles.table}>
               <thead>
                 <tr>
-                  <th>Planet</th>
-                  <th>Nakshatra</th>
-                  <th>Lord</th>
-                  <th>Sub Lord</th>
-                  <th>Degree</th>
+                  <th>{language === 'hi' ? HI.planet : 'Planet'}</th>
+                  <th>{language === 'hi' ? HI.nakshatra : 'Nakshatra'}</th>
+                  <th>{language === 'hi' ? HI.starLord : 'Lord'}</th>
+                  <th>{language === 'hi' ? HI.subLord : 'Sub Lord'}</th>
+                  <th>{language === 'hi' ? HI.degree : 'Degree'}</th>
                 </tr>
               </thead>
               <tbody>

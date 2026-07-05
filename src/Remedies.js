@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
-function Remedies({ birthDate, birthTime, latitude, longitude, timezone }) {
+function Remedies({ birthDate, birthTime, latitude, longitude, timezone, language = 'en' }) {
   const [formData, setFormData] = useState({
     birthDate: birthDate || '',
     birthTime: birthTime || '',
@@ -27,7 +28,8 @@ function Remedies({ birthDate, birthTime, latitude, longitude, timezone }) {
         formData.birthTime,
         formData.latitude,
         formData.longitude,
-        formData.timezone
+        formData.timezone,
+        language
       );
       
       const dasha = await astrologyApi.getKPDasha(
@@ -35,10 +37,11 @@ function Remedies({ birthDate, birthTime, latitude, longitude, timezone }) {
         formData.birthTime,
         formData.latitude,
         formData.longitude,
-        formData.timezone
+        formData.timezone,
+        language
       );
       
-      const result = generateRemedies(chart, dasha);
+      const result = generateRemedies(chart, dasha, language);
       setRemedies(result);
     } catch (err) {
       setError('Failed to calculate remedies');
@@ -46,7 +49,7 @@ function Remedies({ birthDate, birthTime, latitude, longitude, timezone }) {
     setLoading(false);
   };
 
-  const generateRemedies = (chart, dasha) => {
+  const generateRemedies = (chart, dasha, lang = 'en') => {
     const sunSign = chart.sun_sign || 'Aries';
     const moonSign = chart.moon_sign || 'Aries';
     const currentDasha = dasha?.current_dasha || 'Unknown';
@@ -63,16 +66,18 @@ function Remedies({ birthDate, birthTime, latitude, longitude, timezone }) {
       'Ketu': { gem: 'Cat\'s Eye', metal: 'Copper', color: 'Green', planet: 'Ketu' }
     };
 
+    const dayName = (d) => lang === 'hi' ? { 'Sunrise': 'सूर्योदय', 'Evening': 'शाम', 'Tuesday': 'मंगलवार', 'Wednesday': 'बुधवार', 'Thursday': 'गुरुवार', 'Friday': 'शुक्रवार', 'Saturday': 'शनिवार' }[d] || d : d;
+
     const mantras = {
-      'Sun': { mantra: 'Om Suryaya Namah', count: '108 times daily', time: 'Sunrise' },
-      'Moon': { mantra: 'Om Chandraya Namah', count: '108 times daily', time: 'Evening' },
-      'Mars': { mantra: 'Om Mangalaya Namah', count: '108 times daily', time: 'Tuesday' },
-      'Mercury': { mantra: 'Om Budhaya Namah', count: '108 times daily', time: 'Wednesday' },
-      'Jupiter': { mantra: 'Om Brihaspataye Namah', count: '108 times daily', time: 'Thursday' },
-      'Venus': { mantra: 'Om Shukraya Namah', count: '108 times daily', time: 'Friday' },
-      'Saturn': { mantra: 'Om Shanaya Namah', count: '108 times daily', time: 'Saturday' },
-      'Rahu': { mantra: 'Om Rahave Namah', count: '108 times daily', time: 'Saturday' },
-      'Ketu': { mantra: 'Om Ketave Namah', count: '108 times daily', time: 'Tuesday' }
+      'Sun': { mantra: 'Om Suryaya Namah', count: '108 times daily', time: dayName('Sunrise') },
+      'Moon': { mantra: 'Om Chandraya Namah', count: '108 times daily', time: dayName('Evening') },
+      'Mars': { mantra: 'Om Mangalaya Namah', count: '108 times daily', time: dayName('Tuesday') },
+      'Mercury': { mantra: 'Om Budhaya Namah', count: '108 times daily', time: dayName('Wednesday') },
+      'Jupiter': { mantra: 'Om Brihaspataye Namah', count: '108 times daily', time: dayName('Thursday') },
+      'Venus': { mantra: 'Om Shukraya Namah', count: '108 times daily', time: dayName('Friday') },
+      'Saturn': { mantra: 'Om Shanaya Namah', count: '108 times daily', time: dayName('Saturday') },
+      'Rahu': { mantra: 'Om Rahave Namah', count: '108 times daily', time: dayName('Saturday') },
+      'Ketu': { mantra: 'Om Ketave Namah', count: '108 times daily', time: dayName('Tuesday') }
     };
 
     const weakPlanets = [];
@@ -220,16 +225,16 @@ function Remedies({ birthDate, birthTime, latitude, longitude, timezone }) {
 
   return (
     <div style={{ padding: '20px' }}>
-      <h2 style={{color: 'white'}}>🔮 Astrological Remedies</h2>
+      <h2 style={{color: 'white'}}>🔮 {language === 'hi' ? HI.remedies : 'Astrological Remedies'}</h2>
       <p style={{color: '#ccc', marginBottom: '20px'}}>Get personalized gemstone, mantra, and dosha remedies based on your birth chart</p>
       
       <div style={styles.inputGroup}>
-        <label style={{color: 'white', marginRight: '10px'}}>Birth Date:</label>
+        <label style={{color: 'white', marginRight: '10px'}}>{language === 'hi' ? HI.dateOfBirth : 'Birth Date:'}</label>
         <input type="date" name="birthDate" value={formData.birthDate} onChange={(e) => setFormData({...formData, birthDate: e.target.value})} style={styles.input} />
       </div>
       
       <div style={styles.inputGroup}>
-        <label style={{color: 'white', marginRight: '10px'}}>Birth Time:</label>
+        <label style={{color: 'white', marginRight: '10px'}}>{language === 'hi' ? HI.timeOfBirth : 'Birth Time:'}</label>
         <input type="time" name="birthTime" value={formData.birthTime} onChange={(e) => setFormData({...formData, birthTime: e.target.value})} style={styles.input} />
       </div>
       
@@ -297,59 +302,59 @@ function Remedies({ birthDate, birthTime, latitude, longitude, timezone }) {
       )}
       
       <button onClick={calculateRemedies} disabled={loading} style={styles.button}>
-        {loading ? 'Calculating...' : 'Get Remedies'}
+        {loading ? (language === 'hi' ? HI.remedies : 'Calculating...') : `🔮 ${language === 'hi' ? HI.remedies : 'Get Remedies'}`}
       </button>
       
       {error && <p style={styles.error}>{error}</p>}
       
       {remedies && (
         <div style={styles.result}>
-          <h3>📿 Your Personalized Remedies</h3>
+          <h3>📿 {language === 'hi' ? HI.remedies : 'Your Personalized Remedies'}</h3>
           
           <div style={styles.section}>
-            <h4>💎 Recommended Gemstone</h4>
+            <h4>💎 {language === 'hi' ? HI.gemstoneRemedy : 'Recommended Gemstone'}</h4>
             <div style={styles.gemBox}>
-              <p><strong>Gemstone:</strong> {remedies.gemstone.gem}</p>
-              <p><strong>Metal:</strong> {remedies.gemstone.metal}</p>
-              <p><strong>Color:</strong> {remedies.gemstone.color}</p>
-              <p><strong>Planet:</strong> {remedies.gemstone.planet}</p>
-              <p style={{fontSize: '12px', color: '#666', marginTop: '5px'}}>Wear in gold/silver ring on the correct finger after consulting an astrologer</p>
+              <p><strong>{language === 'hi' ? HI.gemstone : 'Gemstone'}:</strong> {remedies.gemstone.gem}</p>
+              <p><strong>{language === 'hi' ? HI.metal : 'Metal'}:</strong> {remedies.gemstone.metal}</p>
+              <p><strong>{language === 'hi' ? 'रंग' : 'Color'}:</strong> {remedies.gemstone.color}</p>
+              <p><strong>{language === 'hi' ? HI.planet : 'Planet'}:</strong> {remedies.gemstone.planet}</p>
+              <p style={{fontSize: '12px', color: '#666', marginTop: '5px'}}>{language === 'hi' ? 'ज्योतिषी से परामर्श के बाद सही उंगली पर सोने/चांदी की अंगूठी में धारण करें' : 'Wear in gold/silver ring on the correct finger after consulting an astrologer'}</p>
             </div>
           </div>
           
           <div style={styles.section}>
-            <h4>🕉️ Recommended Mantra</h4>
+            <h4>🕉️ {language === 'hi' ? HI.mantraRemedy : 'Recommended Mantra'}</h4>
             <div style={styles.mantraBox}>
-              <p><strong>Mantra:</strong> {remedies.mantra.mantra}</p>
-              <p><strong>Count:</strong> {remedies.mantra.count}</p>
-              <p><strong>Best Time:</strong> {remedies.mantra.time}</p>
+              <p><strong>{language === 'hi' ? 'मंत्र' : 'Mantra'}:</strong> {remedies.mantra.mantra}</p>
+              <p><strong>{language === 'hi' ? 'संख्या' : 'Count'}:</strong> {remedies.mantra.count}</p>
+              <p><strong>{language === 'hi' ? 'सर्वोत्तम समय' : 'Best Time'}:</strong> {remedies.mantra.time}</p>
             </div>
           </div>
           
           <div style={styles.section}>
-            <h4>🌟 Planet Status</h4>
-            <p><strong>Weak Planets (need remedy):</strong> {remedies.weak_planets.join(', ')}</p>
-            <p><strong>Strong Planets:</strong> {remedies.strong_planets.join(', ')}</p>
+            <h4>🌟 {language === 'hi' ? 'ग्रह स्थिति' : 'Planet Status'}</h4>
+            <p><strong>{language === 'hi' ? 'कमजोर ग्रह (उपाय आवश्यक)' : 'Weak Planets (need remedy)'}:</strong> {remedies.weak_planets.join(', ')}</p>
+            <p><strong>{language === 'hi' ? HI.strengths : 'Strong Planets'}:</strong> {remedies.strong_planets.join(', ')}</p>
           </div>
           
           <div style={styles.section}>
-            <h4>🩺 Dosha Analysis</h4>
+            <h4>🩺 {language === 'hi' ? 'दोष विश्लेषण' : 'Dosha Analysis'}</h4>
             {remedies.doshas.map((dosha, idx) => (
               <div key={idx} style={styles.doshaBox}>
                 <p><strong>{dosha.name}</strong> - {dosha.severity}</p>
-                <p>Remedy: {dosha.remedy}</p>
+                <p>{language === 'hi' ? 'उपाय' : 'Remedy'}: {dosha.remedy}</p>
               </div>
             ))}
           </div>
           
           <div style={styles.section}>
-            <h4>🛕 Recommended Deities</h4>
+            <h4>🛕 {language === 'hi' ? 'अनुशंसित देवता' : 'Recommended Deities'}</h4>
             <table style={styles.table}>
               <thead>
                 <tr>
-                  <th>Deity</th>
-                  <th>Purpose</th>
-                  <th>Best Time</th>
+                  <th>{language === 'hi' ? 'देवता' : 'Deity'}</th>
+                  <th>{language === 'hi' ? 'उद्देश्य' : 'Purpose'}</th>
+                  <th>{language === 'hi' ? 'सर्वोत्तम समय' : 'Best Time'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -365,7 +370,7 @@ function Remedies({ birthDate, birthTime, latitude, longitude, timezone }) {
           </div>
           
           <div style={styles.section}>
-            <h4>✨ General Remedies</h4>
+            <h4>✨ {language === 'hi' ? HI.remedies : 'General Remedies'}</h4>
             <ul style={{paddingLeft: '20px'}}>
               {remedies.general_remedies.map((rem, idx) => (
                 <li key={idx} style={{marginBottom: '5px'}}>{rem}</li>
@@ -374,7 +379,7 @@ function Remedies({ birthDate, birthTime, latitude, longitude, timezone }) {
           </div>
           
           <div style={styles.disclaimer}>
-            <p><strong>Disclaimer:</strong> These remedies are general recommendations. Please consult a qualified astrologer for personalized guidance. Gemstones should be worn after proper energized process.</p>
+            <p><strong>{language === 'hi' ? 'अस्वीकरण' : 'Disclaimer'}:</strong> {language === 'hi' ? 'ये उपाय सामान्य सिफारिशें हैं। कृपया व्यक्तिगत मार्गदर्शन के लिए किसी योग्य ज्योतिषी से परामर्श लें। रत्न उचित प्रक्रिया के बाद ही धारण करें।' : 'These remedies are general recommendations. Please consult a qualified astrologer for personalized guidance. Gemstones should be worn after proper energized process.'}</p>
           </div>
         </div>
       )}

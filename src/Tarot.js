@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 import InlineAI from './InlineAI';
 
-const Tarot = ({ onUpdateContext, birthData }) => {
+const Tarot = ({ onUpdateContext, birthData, language = 'en' }) => {
   const [cards, setCards] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -13,7 +14,7 @@ const Tarot = ({ onUpdateContext, birthData }) => {
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getTarot(count, question);
+      const result = await astrologyApi.getTarot(count, question, language);
       setCards(result);
       if (onUpdateContext) {
         onUpdateContext({
@@ -32,11 +33,11 @@ const Tarot = ({ onUpdateContext, birthData }) => {
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">🃏 Tarot Reading</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">🃏 {language === 'hi' ? HI.tarot : 'Tarot Reading'}</h2>
       
       <div className="space-y-4 mb-6">
         <div>
-          <label className="block text-gray-300 mb-1">Your Question (optional)</label>
+          <label className="block text-gray-300 mb-1">{language === 'hi' ? HI.question : 'Your Question (optional)'}</label>
           <input
             type="text"
             value={question}
@@ -66,7 +67,7 @@ const Tarot = ({ onUpdateContext, birthData }) => {
           disabled={loading}
           className="w-full py-3 bg-purple-600 text-white rounded-lg font-bold disabled:opacity-50"
         >
-          {loading ? 'Shuffling cards...' : '🃏 Draw Cards'}
+          {loading ? `🃏 ${language === 'hi' ? HI.drawCards : 'Shuffling cards...'}` : `🃏 ${language === 'hi' ? HI.drawCards : 'Draw Cards'}`}
         </button>
       </div>
 
@@ -81,7 +82,7 @@ const Tarot = ({ onUpdateContext, birthData }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {cards.cards.map((card) => (
               <div key={card.position} className="bg-gradient-to-br from-purple-900 to-indigo-900 p-6 rounded-lg text-center">
-                <p className="text-gray-400 text-sm mb-2">Card {card.position}</p>
+                <p className="text-gray-400 text-sm mb-2">{language === 'hi' ? HI.position : 'Card'} {card.position}</p>
                 <p className="text-2xl mb-3">🃏</p>
                 <p className="text-white font-bold text-lg mb-2">{card.name}</p>
                 <p className="text-gray-300 text-sm mb-3">{card.meaning}</p>

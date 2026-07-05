@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
-const WealthPrediction = ({ birthDate, birthTime, latitude, longitude, timezone }) => {
+const WealthPrediction = ({ birthDate, birthTime, latitude, longitude, timezone, language = 'en' }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,7 +17,7 @@ const WealthPrediction = ({ birthDate, birthTime, latitude, longitude, timezone 
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getWealthPrediction(birthDate, birthTime, latitude, longitude, timezone);
+      const result = await astrologyApi.getWealthPrediction(birthDate, birthTime, latitude, longitude, timezone, language);
       setData(result);
     } catch (err) {
       setError(err.message);
@@ -40,7 +41,7 @@ const WealthPrediction = ({ birthDate, birthTime, latitude, longitude, timezone 
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">💰 Wealth Prediction</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">💰 {language === 'hi' ? HI.wealthPrediction : 'Wealth Prediction'}</h2>
 
       {loading && <p className="text-gray-400">Analyzing your wealth potential...</p>}
       {error && <p className="text-red-400 mb-4">{error}</p>}
@@ -48,9 +49,9 @@ const WealthPrediction = ({ birthDate, birthTime, latitude, longitude, timezone 
       {data && !loading && (
         <div className="space-y-6">
           <div className="bg-gray-700 p-6 rounded-lg text-center">
-            <p className="text-gray-400 text-sm mb-1">Wealth Potential</p>
+            <p className="text-gray-400 text-sm mb-1">{language === 'hi' ? HI.wealthPotential : 'Wealth Potential'}</p>
             <p className={`text-3xl font-bold ${getPotentialColor(data.wealth_potential)}`}>{data.wealth_potential}</p>
-            {data.confidence_score && <p className="text-white text-lg mt-1">Confidence: {data.confidence_score}%</p>}
+            {data.confidence_score && <p className="text-white text-lg mt-1">{language === 'hi' ? HI.confidence : 'Confidence'}: {data.confidence_score}%</p>}
           </div>
 
           {data.reasoning && (
@@ -73,14 +74,14 @@ const WealthPrediction = ({ birthDate, birthTime, latitude, longitude, timezone 
 
           {data.best_investment_window && (
             <div className="bg-green-900 p-4 rounded-lg">
-              <h3 className="text-green-400 font-semibold mb-1">📈 Best Investment Window</h3>
+              <h3 className="text-green-400 font-semibold mb-1">📈 {language === 'hi' ? HI.favorablePeriods : 'Best Investment Window'}</h3>
               <p className="text-green-200">{data.best_investment_window}</p>
             </div>
           )}
 
           {data.preparation && (
             <div className="bg-indigo-900 p-4 rounded-lg">
-              <h3 className="text-indigo-400 font-semibold mb-1">🎯 Preparation</h3>
+              <h3 className="text-indigo-400 font-semibold mb-1">🎯 {language === 'hi' ? HI.preparation : 'Preparation'}</h3>
               <p className="text-indigo-200">{data.preparation}</p>
             </div>
           )}
@@ -91,7 +92,7 @@ const WealthPrediction = ({ birthDate, birthTime, latitude, longitude, timezone 
 
           {data.investment_periods?.length > 0 && (
             <div className="bg-gray-700 p-4 rounded-lg">
-              <h3 className="text-lg font-semibold text-green-400 mb-3">📈 Investment Periods</h3>
+              <h3 className="text-lg font-semibold text-green-400 mb-3">📈 {language === 'hi' ? HI.favorablePeriods : 'Investment Periods'}</h3>
               <div className="flex flex-wrap gap-2">
                 {data.investment_periods.map((p, i) => (
                   <span key={i} className="px-3 py-1 bg-green-900 text-green-300 rounded-full text-sm">{p}</span>

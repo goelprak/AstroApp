@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { astrologyApi } from './api';
+import { HI } from './hi';
 
-const ForeignSettlement = ({ birthDate, birthTime, latitude, longitude, timezone }) => {
+const ForeignSettlement = ({ birthDate, birthTime, latitude, longitude, timezone, language = 'en' }) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -16,7 +17,7 @@ const ForeignSettlement = ({ birthDate, birthTime, latitude, longitude, timezone
     setLoading(true);
     setError('');
     try {
-      const result = await astrologyApi.getForeignSettlement(birthDate, birthTime, latitude, longitude, timezone);
+      const result = await astrologyApi.getForeignSettlement(birthDate, birthTime, latitude, longitude, timezone, language);
       setData(result);
     } catch (err) {
       setError(err.message);
@@ -31,7 +32,7 @@ const ForeignSettlement = ({ birthDate, birthTime, latitude, longitude, timezone
 
   return (
     <div className="p-6 bg-gray-800 rounded-lg">
-      <h2 className="text-2xl font-bold mb-4 text-white">🌍 Foreign Settlement Analysis</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">🌍 {language === 'hi' ? HI.foreignSettlement : 'Foreign Settlement Analysis'}</h2>
 
       {loading && <p className="text-gray-400">Analyzing foreign settlement potential...</p>}
       {error && <p className="text-red-400 mb-4">{error}</p>}
@@ -39,12 +40,12 @@ const ForeignSettlement = ({ birthDate, birthTime, latitude, longitude, timezone
       {data && !loading && (
         <div className="space-y-6">
           <div className="bg-gray-700 p-6 rounded-lg">
-            <p className="text-gray-400 text-sm mb-2">Probability Score</p>
+            <p className="text-gray-400 text-sm mb-2">{language === 'hi' ? HI.probability : 'Probability Score'}</p>
             <div className="w-full bg-gray-600 rounded-full h-4 mb-2">
               <div className="bg-purple-600 h-4 rounded-full transition-all" style={{ width: `${data.probability_score}%` }}></div>
             </div>
             <p className="text-white text-center font-bold">{data.probability_score}/100</p>
-            {data.confidence_level && <p className="text-center text-sm text-gray-400 mt-1">Confidence: {data.confidence_level}</p>}
+            {data.confidence_level && <p className="text-center text-sm text-gray-400 mt-1">{language === 'hi' ? HI.confidence : 'Confidence'}: {data.confidence_level}</p>}
           </div>
 
           {data.reasoning && (
@@ -67,14 +68,14 @@ const ForeignSettlement = ({ birthDate, birthTime, latitude, longitude, timezone
 
           {data.best_window && (
             <div className="bg-green-900 p-4 rounded-lg">
-              <h3 className="text-green-400 font-semibold mb-1">🌟 Best Window</h3>
+              <h3 className="text-green-400 font-semibold mb-1">🌟 {language === 'hi' ? HI.bestWindow : 'Best Window'}</h3>
               <p className="text-green-200">{data.best_window}</p>
             </div>
           )}
 
           {data.preparation && (
             <div className="bg-indigo-900 p-4 rounded-lg">
-              <h3 className="text-indigo-400 font-semibold mb-1">🎯 Preparation</h3>
+              <h3 className="text-indigo-400 font-semibold mb-1">🎯 {language === 'hi' ? HI.preparation : 'Preparation'}</h3>
               <p className="text-indigo-200">{data.preparation}</p>
             </div>
           )}
