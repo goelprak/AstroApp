@@ -1,23 +1,40 @@
 import React, { useState } from 'react';
 import { astrologyApi } from './api';
 
-function AIChat({ name, birthDate, birthTime, latitude, longitude, timezone, tabContext }) {
+const GREETING = {
+  en: "Hello! I'm your AI Astrology Assistant. Ask me anything about your chart, numerology, KP astrology, or general astrological guidance. For best results, share your birth details in the Profile tab first!",
+  hi: "नमस्ते! मैं आपका AI ज्योतिष सहायक हूं। अपने चार्ट, अंक ज्योतिष, KP ज्योतिष या सामान्य ज्योतिष मार्गदर्शन के बारे में मुझसे कुछ भी पूछें। सर्वोत्तम परिणामों के लिए, पहले प्रोफ़ाइल टैब में अपनी जन्म जानकारी दर्ज करें!"
+};
+
+function AIChat({ name, birthDate, birthTime, latitude, longitude, timezone, tabContext, language }) {
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hello! I\'m your AI Astrology Assistant. Ask me anything about your chart, numerology, KP astrology, or general astrological guidance. For best results, share your birth details in the Profile tab first!' }
+    { role: 'assistant', content: GREETING[language] || GREETING.en }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const quickQuestions = [
-    "What does my birth chart say about my career?",
-    "Tell me about my love life and relationships",
-    "What are my strengths and weaknesses?",
-    "Explain my current planetary periods",
-    "What gemstones should I wear?",
-    "Give me spiritual guidance for this year",
-    "What does my numerology reveal about me?",
-    "Explain my KP chart significators"
-  ];
+  const quickQuestions = {
+    en: [
+      "What does my birth chart say about my career?",
+      "Tell me about my love life and relationships",
+      "What are my strengths and weaknesses?",
+      "Explain my current planetary periods",
+      "What gemstones should I wear?",
+      "Give me spiritual guidance for this year",
+      "What does my numerology reveal about me?",
+      "Explain my KP chart significators"
+    ],
+    hi: [
+      "मेरी जन्म कुंडली मेरे करियर के बारे में क्या कहती है?",
+      "मेरे प्रेम जीवन और संबंधों के बारे में बताएं",
+      "मेरी ताकत और कमजोरियां क्या हैं?",
+      "मेरे वर्तमान ग्रह काल समझाएं",
+      "मुझे कौन से रत्न धारण करने चाहिए?",
+      "इस वर्ष के लिए मुझे आध्यात्मिक मार्गदर्शन दें",
+      "मेरा अंक ज्योतिष मेरे बारे में क्या बताता है?",
+      "मेरे KP चार्ट सिग्निफिकेटर समझाएं"
+    ]
+  };
 
   const sendMessage = async (text = null) => {
     const message = text || input;
@@ -38,12 +55,13 @@ function AIChat({ name, birthDate, birthTime, latitude, longitude, timezone, tab
         timezone
       } : null;
 
-      const result = await astrologyApi.aiChat(message, birthData, tabContext);
-      
+      const result = await astrologyApi.aiChat(message, birthData, tabContext, language);
+
       const aiMessage = { role: 'assistant', content: result.response };
       setMessages(prev => [...prev, aiMessage]);
     } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.' }]);
+      const errMsg = language === 'hi' ? 'क्षमा करें, एक त्रुटि हुई। कृपया पुनः प्रयास करें।' : 'Sorry, I encountered an error. Please try again.';
+      setMessages(prev => [...prev, { role: 'assistant', content: errMsg }]);
     }
 
     setLoading(false);
@@ -56,17 +74,21 @@ function AIChat({ name, birthDate, birthTime, latitude, longitude, timezone, tab
     }
   };
 
+  const qs = quickQuestions[language] || quickQuestions.en;
+
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h2 style={{color: 'white', marginBottom: '10px'}}>🤖 AI Astrology Assistant</h2>
-      <p style={{color: '#ccc', marginBottom: '20px'}}>
-        Powered by OpenAI GPT. Ask anything about your chart!
+      <h2 style={{color: 'white', marginBottom: '10px'}}>🤖 {language === 'hi' ? 'AI ज्योतिष सहायक' : 'AI Astrology Assistant'}</h2>
+      <p style={{color: '#ccc', marginBottom: '20px', fontSize: '13px'}}>
+        {language === 'hi' ? 'अपनी कुंडली के बारे में कुछ भी पूछें!' : 'Ask anything about your chart!'}
       </p>
 
       <div style={{marginBottom: '15px'}}>
-        <p style={{color: '#aaa', marginBottom: '8px', fontSize: '14px'}}>Quick Questions:</p>
+        <p style={{color: '#aaa', marginBottom: '8px', fontSize: '14px'}}>
+          {language === 'hi' ? 'त्वरित प्रश्न:' : 'Quick Questions:'}
+        </p>
         <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
-          {quickQuestions.map((q, idx) => (
+          {qs.map((q, idx) => (
             <button
               key={idx}
               onClick={() => sendMessage(q)}
@@ -114,7 +136,7 @@ function AIChat({ name, birthDate, birthTime, latitude, longitude, timezone, tab
               lineHeight: '1.5'
             }}>
               <div style={{fontWeight: 'bold', fontSize: '11px', marginBottom: '5px', opacity: 0.8}}>
-                {msg.role === 'user' ? 'You' : '🤖 AI Assistant'}
+                {msg.role === 'user' ? (language === 'hi' ? 'आप' : 'You') : '🤖 AI'}
               </div>
               {msg.content}
             </div>
@@ -122,7 +144,7 @@ function AIChat({ name, birthDate, birthTime, latitude, longitude, timezone, tab
         ))}
         {loading && (
           <div style={{color: '#6c5ce7', fontSize: '14px'}}>
-            Thinking...
+            {language === 'hi' ? 'सोच रहा हूं...' : 'Thinking...'}
           </div>
         )}
       </div>
@@ -133,7 +155,7 @@ function AIChat({ name, birthDate, birthTime, latitude, longitude, timezone, tab
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Ask your astrological question..."
+          placeholder={language === 'hi' ? 'अपना ज्योतिष प्रश्न पूछें...' : "Ask your astrological question..."}
           style={{
             flex: 1,
             padding: '12px',
@@ -158,13 +180,14 @@ function AIChat({ name, birthDate, birthTime, latitude, longitude, timezone, tab
             fontWeight: 'bold'
           }}
         >
-          Send
+          {language === 'hi' ? 'भेजें' : 'Send'}
         </button>
       </div>
 
       <div style={{marginTop: '20px', padding: '10px', backgroundColor: '#2d3748', borderRadius: '8px', fontSize: '12px', color: '#aaa'}}>
-        <strong style={{color: '#6c5ce7'}}>💡 Tip:</strong> For personalized answers, first fill in your birth details in the Profile tab. 
-        The AI will use your chart data to provide more accurate insights!
+        <strong style={{color: '#6c5ce7'}}>💡 {language === 'hi' ? 'सुझाव:' : 'Tip:'}</strong> {language === 'hi'
+          ? 'व्यक्तिगत उत्तरों के लिए, पहले प्रोफ़ाइल टैब में अपनी जन्म जानकारी भरें। AI आपके चार्ट डेटा का उपयोग करके अधिक सटीक जानकारी प्रदान करेगा!'
+          : 'For personalized answers, first fill in your birth details in the Profile tab. The AI will use your chart data to provide more accurate insights!'}
       </div>
     </div>
   );

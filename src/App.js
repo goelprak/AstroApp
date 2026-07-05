@@ -25,35 +25,36 @@ import NavamsaChart from './NavamsaChart';
 import PdfReport from './PdfReport';
 
 const TABS = [
-  { id:'profile', label:'Profile', icon:'👤' },
-  { id:'ai', label:'AI Chat', icon:'🤖' },
-  { id:'natal', label:'Natal', icon:'🧿' },
-  { id:'analysis', label:'Analysis', icon:'📊' },
-  { id:'numerology', label:'Numbers', icon:'🔢' },
-  { id:'horoscope', label:'Daily', icon:'🌟' },
-  { id:'weekly', label:'Weekly', icon:'📅' },
-  { id:'monthly', label:'Monthly', icon:'📆' },
-  { id:'yearly', label:'10-Yr', icon:'📈' },
-  { id:'transits', label:'Transits', icon:'🪐' },
-  { id:'tarot', label:'Tarot', icon:'🃏' },
-  { id:'muhurat', label:'Muhurat', icon:'🕐' },
-  { id:'compatibility', label:'Synastry', icon:'💕' },
-  { id:'kundli', label:'Kundli', icon:'💍' },
-  { id:'remedies', label:'Remedies', icon:'📿' },
-  { id:'kpchart', label:'KP Chart', icon:'🔯' },
-  { id:'kpdasha', label:'KP Dasha', icon:'⏳' },
-  { id:'kphorary', label:'KP Horary', icon:'❓' },
-  { id:'panchang', label:'Panchang', icon:'📅' },
-  { id:'navamsa', label:'Navamsa (D9)', icon:'🔯' },
-  { id:'wealth', label:'Wealth', icon:'💰' },
-  { id:'foreign', label:'Foreign', icon:'🌍' },
-  { id:'namecorrection', label:'NameFix', icon:'✏️' },
-  { id:'timeline', label:'Timeline', icon:'⏳' },
-  { id:'pdfreport', label:'PDF', icon:'📄' }
+  { id:'profile', label:'Profile', hiLabel:'प्रोफ़ाइल', icon:'👤' },
+  { id:'ai', label:'AI Chat', hiLabel:'AI चैट', icon:'🤖' },
+  { id:'natal', label:'Natal', hiLabel:'जन्म कुंडली', icon:'🧿' },
+  { id:'analysis', label:'Analysis', hiLabel:'विश्लेषण', icon:'📊' },
+  { id:'numerology', label:'Numbers', hiLabel:'अंक ज्योतिष', icon:'🔢' },
+  { id:'horoscope', label:'Daily', hiLabel:'दैनिक', icon:'🌟' },
+  { id:'weekly', label:'Weekly', hiLabel:'साप्ताहिक', icon:'📅' },
+  { id:'monthly', label:'Monthly', hiLabel:'मासिक', icon:'📆' },
+  { id:'yearly', label:'10-Yr', hiLabel:'10 वर्ष', icon:'📈' },
+  { id:'transits', label:'Transits', hiLabel:'गोचर', icon:'🪐' },
+  { id:'tarot', label:'Tarot', hiLabel:'टैरो', icon:'🃏' },
+  { id:'muhurat', label:'Muhurat', hiLabel:'मुहूर्त', icon:'🕐' },
+  { id:'compatibility', label:'Synastry', hiLabel:'अनुकूलता', icon:'💕' },
+  { id:'kundli', label:'Kundli', hiLabel:'कुंडली', icon:'💍' },
+  { id:'remedies', label:'Remedies', hiLabel:'उपाय', icon:'📿' },
+  { id:'kpchart', label:'KP Chart', hiLabel:'KP चार्ट', icon:'🔯' },
+  { id:'kpdasha', label:'KP Dasha', hiLabel:'KP दशा', icon:'⏳' },
+  { id:'kphorary', label:'KP Horary', hiLabel:'KP होररी', icon:'❓' },
+  { id:'panchang', label:'Panchang', hiLabel:'पंचांग', icon:'📅' },
+  { id:'navamsa', label:'Navamsa (D9)', hiLabel:'नवमांश D9', icon:'🔯' },
+  { id:'wealth', label:'Wealth', hiLabel:'धन', icon:'💰' },
+  { id:'foreign', label:'Foreign', hiLabel:'विदेश', icon:'🌍' },
+  { id:'namecorrection', label:'NameFix', hiLabel:'नाम सुधार', icon:'✏️' },
+  { id:'timeline', label:'Timeline', hiLabel:'समयरेखा', icon:'⏳' },
+  { id:'pdfreport', label:'PDF', hiLabel:'PDF', icon:'📄' }
 ];
 
 function App() {
   const [activeTab, setActiveTab] = useState('profile');
+  const [language, setLanguage] = useState('en');
   const [profile, setProfile] = useState({
     name:'', birthDate:'', birthTime:'', placeOfBirth:'', timezone:'Asia/Kolkata'
   });
@@ -193,7 +194,7 @@ function App() {
       case 'natal': return <div className="animate-fade-up" key={k}><NatalChart birthDate={profile.birthDate} birthTime={profile.birthTime} latitude={location.lat} longitude={location.lng} timezone={profile.timezone} /></div>;
       case 'analysis': return <div className="animate-fade-up" key={k}><DetailedAnalysis birthDate={profile.birthDate} birthTime={profile.birthTime} latitude={location.lat} longitude={location.lng} timezone={profile.timezone} onUpdateContext={d => updateTabContext('detailed_analysis',d)} birthData={birthData} /></div>;
       case 'numerology': return <div className="animate-fade-up" key={k}><Numerology name={profile.name} birthDate={profile.birthDate} onUpdateContext={d => updateTabContext('numerology',d)} birthData={birthData} /></div>;
-      case 'ai': return <div className="animate-fade-up" key={k}><AIChat name={profile.name} birthDate={profile.birthDate} birthTime={profile.birthTime} latitude={location.lat} longitude={location.lng} timezone={profile.timezone} tabContext={tabContext} /></div>;
+      case 'ai': return <div className="animate-fade-up" key={k}><AIChat name={profile.name} birthDate={profile.birthDate} birthTime={profile.birthTime} latitude={location.lat} longitude={location.lng} timezone={profile.timezone} tabContext={tabContext} language={language} /></div>;
       case 'horoscope': return <div className="animate-fade-up" key={k}><Horoscope sign={userSunSign} onUpdateContext={d => updateTabContext('horoscope',d)} birthData={birthData} /></div>;
       case 'weekly': return <div className="animate-fade-up" key={k}><WeeklyHoroscope userSign={userSunSign} onUpdateContext={d => updateTabContext('weekly',d)} birthData={birthData} /></div>;
       case 'monthly': return <div className="animate-fade-up" key={k}><MonthlyHoroscope userSign={userSunSign} onUpdateContext={d => updateTabContext('monthly',d)} birthData={birthData} /></div>;
@@ -222,12 +223,12 @@ function App() {
     <div className="app">
       {/* Sidebar - desktop */}
       <div className="sidebar">
-        <h2>✦ Astrology</h2>
+        <h2>✦ {language === 'hi' ? 'ज्योतिष' : 'Astrology'}</h2>
         <div style={{display:'flex',flexDirection:'column',gap:2,flex:1,overflowY:'auto'}}>
           {TABS.map(t => (
             <button key={t.id} className={`nav-btn ${activeTab === t.id ? 'active' : ''}`} onClick={() => setActiveTab(t.id)}>
               <span className="nav-icon">{t.icon}</span>
-              <span>{t.label}</span>
+              <span>{language === 'hi' ? (t.hiLabel || t.label) : t.label}</span>
             </button>
           ))}
         </div>
@@ -236,14 +237,20 @@ function App() {
 
       {/* Header - mobile */}
       <div className="app-header">
-        <h1>✦ Astrology</h1>
+        <h1>✦ {language === 'hi' ? 'ज्योतिष' : 'Astrology'}</h1>
         <div className="sub">
-          {profile.name ? <span>👤 {profile.name}</span> : <span>Discover the cosmos</span>}
+          {profile.name ? <span>👤 {profile.name}</span> : <span>{language === 'hi' ? 'ब्रह्मांड की खोज' : 'Discover the cosmos'}</span>}
           {profile.placeOfBirth && <span style={{marginLeft:6}}>📍 {profile.placeOfBirth.split(',')[0]}</span>}
         </div>
-        {!profile.birthDate && (
-          <button className="btn btn-sm btn-ghost" onClick={() => setActiveTab('profile')} style={{fontSize:11}}>Setup</button>
-        )}
+        <div style={{display:'flex',gap:'6px',alignItems:'center'}}>
+          <button className="btn btn-sm btn-ghost" onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+            style={{fontSize:'11px',padding:'4px 8px',minWidth:'40px',fontWeight:700}}>
+            {language === 'en' ? 'हिन्दी' : 'English'}
+          </button>
+          {!profile.birthDate && (
+            <button className="btn btn-sm btn-ghost" onClick={() => setActiveTab('profile')} style={{fontSize:11}}>{language === 'hi' ? 'सेटअप' : 'Setup'}</button>
+          )}
+        </div>
       </div>
 
       {/* Content */}
@@ -256,7 +263,7 @@ function App() {
         {TABS.map(t => (
           <button key={t.id} className={`nav-btn ${activeTab === t.id ? 'active' : ''}`} onClick={() => setActiveTab(t.id)}>
             <span className="nav-icon">{t.icon}</span>
-            <span>{t.label}</span>
+            <span>{language === 'hi' ? (t.hiLabel || t.label) : t.label}</span>
           </button>
         ))}
       </div>

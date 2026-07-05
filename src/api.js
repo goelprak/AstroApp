@@ -143,8 +143,8 @@ export const astrologyApi = {
     return response.json();
   },
 
-  aiChat: async (message, birthData = null, tabContext = null) => {
-    const body = { message, birth_data: birthData };
+  aiChat: async (message, birthData = null, tabContext = null, language = 'en') => {
+    const body = { message, birth_data: birthData, language };
     if (tabContext && Object.keys(tabContext).length > 0) body.tab_context = tabContext;
     const response = await fetch(`${API_BASE}/api/ai/chat`, {
       method: 'POST',
