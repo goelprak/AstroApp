@@ -1,0 +1,57 @@
+{
+  "name": "astrology-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Astrology App - Desktop & Mobile",
+  "homepage": "./",
+  "main": "electron.js",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1"
+  },
+"scripts": {
+    "start": "react-scripts start",
+    "build": "set DISABLE_ESLINT_PLUGIN=true && react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron-start": "electron .",
+    "electron-build": "npm run build && electron-builder --win --publish=never"
+  },
+  "build": {
+    "appId": "com.astrology.app",
+    "productName": "Astrology App",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "build/**/*",
+      "electron.js"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "eslintConfig": {
+    "extends": ["react-app"]
+  },
+  "browserslist": {
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
+  },
+  "devDependencies": {
+    "electron": "^41.2.0",
+    "electron-builder": "^26.8.1"
+  }
+}
