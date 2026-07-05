@@ -19,7 +19,6 @@ import YearlyPredictions from './YearlyPredictions';
 import Panchang from './Panchang';
 import WealthPrediction from './WealthPrediction';
 import ForeignSettlement from './ForeignSettlement';
-import FestivalCalendar from './FestivalCalendar';
 import NameCorrection from './NameCorrection';
 import LifeTimeline from './LifeTimeline';
 import NavamsaChart from './NavamsaChart';
@@ -48,7 +47,6 @@ const TABS = [
   { id:'navamsa', label:'Navamsa (D9)', icon:'🔯' },
   { id:'wealth', label:'Wealth', icon:'💰' },
   { id:'foreign', label:'Foreign', icon:'🌍' },
-  { id:'festivals', label:'Festivals', icon:'🎉' },
   { id:'namecorrection', label:'NameFix', icon:'✏️' },
   { id:'timeline', label:'Timeline', icon:'⏳' },
   { id:'pdfreport', label:'PDF', icon:'📄' }
@@ -213,7 +211,6 @@ function App() {
       case 'navamsa': return <div className="animate-fade-up" key={k}><NavamsaChart birthDate={profile.birthDate} birthTime={profile.birthTime} latitude={location.lat} longitude={location.lng} timezone={profile.timezone} /></div>;
       case 'wealth': return <div className="animate-fade-up" key={k}><WealthPrediction birthDate={profile.birthDate} birthTime={profile.birthTime} latitude={location.lat} longitude={location.lng} timezone={profile.timezone} /></div>;
       case 'foreign': return <div className="animate-fade-up" key={k}><ForeignSettlement birthDate={profile.birthDate} birthTime={profile.birthTime} latitude={location.lat} longitude={location.lng} timezone={profile.timezone} /></div>;
-      case 'festivals': return <div className="animate-fade-up" key={k}><FestivalCalendar /></div>;
       case 'namecorrection': return <div className="animate-fade-up" key={k}><NameCorrection /></div>;
       case 'timeline': return <div className="animate-fade-up" key={k}><LifeTimeline birthDate={profile.birthDate} birthTime={profile.birthTime} latitude={location.lat} longitude={location.lng} timezone={profile.timezone} /></div>;
       case 'pdfreport': return <div className="animate-fade-up" key={k}><PdfReport birthDate={profile.birthDate} birthTime={profile.birthTime} latitude={location.lat} longitude={location.lng} timezone={profile.timezone} name={profile.name} /></div>;

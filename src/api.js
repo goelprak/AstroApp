@@ -200,15 +200,6 @@ export const astrologyApi = {
     return response.json();
   },
 
-  getFestivalCalendar: async (year = 2026) => {
-    const response = await fetch(`${API_BASE}/api/astrology/festival-calendar`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ year })
-    });
-    if (!response.ok) throw new Error('Failed to get festival calendar');
-    return response.json();
-  },
-
   getNameCorrection: async (name, birthDate = '') => {
     const response = await fetch(`${API_BASE}/api/astrology/name-correction`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
