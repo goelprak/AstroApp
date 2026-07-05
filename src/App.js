@@ -233,6 +233,11 @@ function App() {
           ))}
         </div>
         {profile.name && <div className="profile-badge" style={{margin:'8px',justifyContent:'center'}}>👤 {profile.name}</div>}
+        <div style={{padding:'8px',borderTop:'1px solid var(--card-border)',marginTop:'auto'}}>
+          <button className="btn btn-sm btn-ghost" onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')} style={{width:'100%',fontSize:'11px',padding:'6px 8px',fontWeight:700}}>
+            {language === 'en' ? 'हिन्दी' : 'English'}
+          </button>
+        </div>
       </div>
 
       {/* Header - mobile */}
