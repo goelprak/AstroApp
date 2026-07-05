@@ -14,17 +14,19 @@ const PLANET_COLORS = {
 };
 
 const PLANET_SYMBOLS = {
-  Sun: '☉', Moon: '☽', Mars: '♂', Mercury: '☿', Venus: '♀',
-  Jupiter: '♃', Saturn: '♄', Rahu: '☊', Ketu: '☋', Uranus: '♅', Neptune: '♆', Pluto: '♇'
+  Sun: '\u2609', Moon: '\u263D', Mars: '\u2642', Mercury: '\u263F', Venus: '\u2640',
+  Jupiter: '\u2643', Saturn: '\u2644', Rahu: '\u260A', Ketu: '\u260B', Uranus: '\u2645', Neptune: '\u2646', Pluto: '\u2647'
 };
 
 const SIGN_NAMES = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'];
 
 const SIGN_SYMBOLS_SHORT = {
-  Aries: '♈', Taurus: '♉', Gemini: '♊', Cancer: '♋',
-  Leo: '♌', Virgo: '♍', Libra: '♎', Scorpio: '♏',
-  Sagittarius: '♐', Capricorn: '♑', Aquarius: '♒', Pisces: '♓'
+  Aries: '\u2648', Taurus: '\u2649', Gemini: '\u264A', Cancer: '\u264B',
+  Leo: '\u264C', Virgo: '\u264D', Libra: '\u264E', Scorpio: '\u264F',
+  Sagittarius: '\u2650', Capricorn: '\u2651', Aquarius: '\u2652', Pisces: '\u2653'
 };
+
+const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
 
 const HOUSE_NAMES = [
   'Self & Identity', 'Wealth & Values', 'Communication', 'Home & Family',
@@ -63,19 +65,70 @@ const HOUSE_SUMMARIES = {
 };
 
 const PLANET_PREDICTIONS = {
-  Sun: h => `Sun here strengthens your confidence in House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]} matters.`,
-  Moon: h => `Moon here brings emotional sensitivity to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]} areas.`,
-  Mars: h => `Mars gives drive and ambition to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]} matters.`,
-  Mercury: h => `Mercury enhances intellect and communication in House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]}.`,
-  Jupiter: h => `Jupiter brings expansion and good fortune to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]}.`,
-  Venus: h => `Venus brings harmony, love, and beauty to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]}.`,
-  Saturn: h => `Saturn brings discipline and karmic lessons to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]}.`,
-  Rahu: h => `Rahu brings ambition and unexpected events to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]}.`,
-  Ketu: h => `Ketu brings spiritual detachment to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]}.`,
-  Uranus: h => `Uranus brings innovation and sudden changes to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]}.`,
-  Neptune: h => `Neptune brings dreams and intuition to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]}.`,
-  Pluto: h => `Pluto brings transformation and power to House ${['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'][h-1]}.`
+  Sun: h => `Sun here strengthens your confidence in House ${ROMAN[h-1]} matters.`,
+  Moon: h => `Moon here brings emotional sensitivity to House ${ROMAN[h-1]} areas.`,
+  Mars: h => `Mars gives drive and ambition to House ${ROMAN[h-1]} matters.`,
+  Mercury: h => `Mercury enhances intellect and communication in House ${ROMAN[h-1]}.`,
+  Jupiter: h => `Jupiter brings expansion and good fortune to House ${ROMAN[h-1]}.`,
+  Venus: h => `Venus brings harmony, love, and beauty to House ${ROMAN[h-1]}.`,
+  Saturn: h => `Saturn brings discipline and karmic lessons to House ${ROMAN[h-1]}.`,
+  Rahu: h => `Rahu brings ambition and unexpected events to House ${ROMAN[h-1]}.`,
+  Ketu: h => `Ketu brings spiritual detachment to House ${ROMAN[h-1]}.`,
+  Uranus: h => `Uranus brings innovation and sudden changes to House ${ROMAN[h-1]}.`,
+  Neptune: h => `Neptune brings dreams and intuition to House ${ROMAN[h-1]}.`,
+  Pluto: h => `Pluto brings transformation and power to House ${ROMAN[h-1]}.`
 };
+
+const CELL_STYLE = (isAngular, isSuccedent, isHovered) => ({
+  background: isAngular
+    ? 'linear-gradient(145deg, rgba(108,92,231,0.22), rgba(108,92,231,0.06))'
+    : isSuccedent
+      ? 'linear-gradient(145deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02))'
+      : 'linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
+  border: isAngular
+    ? '1.5px solid rgba(124,92,252,0.45)'
+    : isHovered
+      ? '1.5px solid rgba(124,92,252,0.5)'
+      : '1px solid rgba(255,255,255,0.06)',
+  borderRadius: '8px',
+  display: 'flex',
+  flexDirection: 'column',
+  position: 'relative',
+  overflow: 'hidden',
+  cursor: 'pointer',
+  transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+  transform: isHovered ? 'scale(1.04)' : 'scale(1)',
+  zIndex: isHovered ? 2 : 1,
+  boxShadow: isHovered ? '0 4px 20px rgba(108,92,231,0.2)' : 'none'
+});
+
+const CELL_GLOW = (isAngular) => isAngular ? (
+  <div style={{
+    position: 'absolute', inset: 0, pointerEvents: 'none',
+    background: 'radial-gradient(ellipse at 50% 0%, rgba(124,92,252,0.08), transparent 70%)'
+  }} />
+) : null;
+
+
+
+function CornerDecor({ color = 'rgba(124,92,252,0.25)' }) {
+  const cornerStyle = (pos) => ({
+    position: 'absolute',
+    width: 8,
+    height: 8,
+    borderColor: color,
+    borderStyle: 'solid',
+    ...pos
+  });
+  return (
+    <>
+      <div style={{...cornerStyle({top:3,left:3}), borderWidth:'1px 0 0 1px', borderRadius:'3px 0 0 0'}} />
+      <div style={{...cornerStyle({top:3,right:3}), borderWidth:'1px 1px 0 0', borderRadius:'0 3px 0 0'}} />
+      <div style={{...cornerStyle({bottom:3,left:3}), borderWidth:'0 0 1px 1px', borderRadius:'0 0 0 3px'}} />
+      <div style={{...cornerStyle({bottom:3,right:3}), borderWidth:'0 1px 1px 0', borderRadius:'0 0 3px 0'}} />
+    </>
+  );
+}
 
 export default function KundliChart({ chart, compact }) {
   const [hoveredHouse, setHoveredHouse] = useState(null);
@@ -103,9 +156,6 @@ export default function KundliChart({ chart, compact }) {
     }
   }
 
-  const ascIdx = SIGN_NAMES.indexOf(chart.rising_sign || 'Aries');
-  const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-
   const handleMouseEnter = (hNum, e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const containerRect = e.currentTarget.closest('[data-chart-container]')?.getBoundingClientRect() || rect;
@@ -118,8 +168,12 @@ export default function KundliChart({ chart, compact }) {
 
   const handleMouseLeave = () => setHoveredHouse(null);
 
+  const ascSym = SIGN_SYMBOLS_SHORT[chart.rising_sign] || '?';
+
   return (
-    <div data-chart-container style={{position:'relative', display:'flex', flexDirection:'column', alignItems:'center', width:'100%'}}>
+    <div data-chart-container style={{
+      position:'relative', display:'flex', flexDirection:'column', alignItems:'center', width:'100%'
+    }}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(4, 1fr)',
@@ -127,26 +181,42 @@ export default function KundliChart({ chart, compact }) {
         gap: '3px',
         width: compact ? '240px' : 'min(420px, 100%)',
         aspectRatio: '1 / 1',
-        position: 'relative'
+        position: 'relative',
+        background: 'radial-gradient(ellipse at center, rgba(124,92,252,0.04) 0%, transparent 70%)',
+        borderRadius: '12px',
+        padding: '3px'
       }}>
         {HOUSE_GRID.flat().map((hNum, idx) => {
           if (hNum === null) {
             if (idx === 5) {
               return (
                 <div key="center" style={{
-                  background: 'linear-gradient(145deg, rgba(108,92,231,0.25), rgba(162,155,254,0.08))',
-                  borderRadius: '12px', display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center',
-                  border: '1.5px solid rgba(108,92,231,0.3)',
                   gridColumn: '2 / 4', gridRow: '2 / 4',
-                  boxShadow: 'inset 0 0 30px rgba(108,92,231,0.05)'
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  position: 'relative'
                 }}>
-                  <div style={{fontSize:'9px', color:'rgba(255,255,255,0.35)', marginBottom:'4px', textTransform:'uppercase', letterSpacing:'2px', fontWeight:500}}>Lagna</div>
-                  <div style={{fontSize:'24px', fontWeight:'bold', color:'#7C5CFC', lineHeight:1.1}}>
-                    {SIGN_SYMBOLS_SHORT[chart.rising_sign] || '?'}
-                  </div>
-                  <div style={{fontSize:'12px', color:'rgba(255,255,255,0.5)', fontWeight:500, marginTop:'2px'}}>
-                    {chart.rising_sign || '-'}
+                  <div style={{
+                    width: '82%', height: '82%',
+                    background: 'linear-gradient(145deg, rgba(108,92,231,0.35), rgba(108,92,231,0.10))',
+                    borderRadius: '50%',
+                    display: 'flex', flexDirection: 'column',
+                    alignItems: 'center', justifyContent: 'center',
+                    border: '2px solid rgba(124,92,252,0.4)',
+                    boxShadow: '0 0 30px rgba(108,92,231,0.15), inset 0 0 30px rgba(108,92,231,0.05)',
+                    position: 'relative'
+                  }}>
+                    <div style={{
+                      position: 'absolute', inset: -4, borderRadius: '50%',
+                      background: 'conic-gradient(from 0deg, transparent, rgba(124,92,252,0.1), transparent 60%, rgba(124,92,252,0.05) 80%, transparent)',
+                      pointerEvents: 'none'
+                    }} />
+                    <div style={{fontSize:'8px', color:'rgba(255,255,255,0.35)', textTransform:'uppercase', letterSpacing:'2px', fontWeight:500, marginBottom:'2px'}}>Lagna</div>
+                    <div style={{fontSize: compact ? '20px' : '28px', fontWeight:'bold', color:'#7C5CFC', lineHeight:1.1, textShadow:'0 0 20px rgba(124,92,252,0.4)'}}>
+                      {ascSym}
+                    </div>
+                    <div style={{fontSize: compact ? '10px' : '13px', color:'rgba(255,255,255,0.55)', fontWeight:500, marginTop:'2px'}}>
+                      {chart.rising_sign || '-'}
+                    </div>
                   </div>
                 </div>
               );
@@ -158,76 +228,72 @@ export default function KundliChart({ chart, compact }) {
           const sign = houseSign[hNum] || '?';
           const isAngular = [1,4,7,10].includes(hNum);
           const isSuccedent = [2,5,8,11].includes(hNum);
+          const isHovered = hoveredHouse === hNum;
 
           return (
             <div
               key={`h${hNum}`}
               onMouseEnter={(e) => handleMouseEnter(hNum, e)}
               onMouseLeave={handleMouseLeave}
-              style={{
-                background: isAngular
-                  ? 'linear-gradient(145deg, rgba(108,92,231,0.18), rgba(108,92,231,0.05))'
-                  : isSuccedent
-                    ? 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))'
-                    : 'linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.005))',
-                border: isAngular
-                  ? '1.5px solid rgba(108,92,231,0.4)'
-                  : hoveredHouse === hNum
-                    ? '1.5px solid rgba(124,92,252,0.5)'
-                    : '1px solid rgba(255,255,255,0.07)',
-                borderRadius: '10px', padding: compact ? '3px' : '5px',
-                display: 'flex', flexDirection: 'column',
-                position: 'relative', overflow: 'hidden',
-                cursor: 'pointer', transition: 'all 0.2s ease',
-                transform: hoveredHouse === hNum ? 'scale(1.03)' : 'scale(1)',
-                zIndex: hoveredHouse === hNum ? 2 : 1
-              }}
+              style={CELL_STYLE(isAngular, isSuccedent, isHovered)}
             >
+              {CELL_GLOW(isAngular)}
+              <CornerDecor color={isAngular ? 'rgba(124,92,252,0.3)' : 'rgba(255,255,255,0.08)'} />
+
               <div style={{
                 display:'flex', justifyContent:'space-between', alignItems:'flex-start',
-                padding: '0 2px'
+                padding: compact ? '2px 4px' : '3px 5px', position:'relative', zIndex:1
               }}>
                 <span style={{
-                  fontSize: compact ? '10px' : '12px',
-                  color: isAngular ? 'rgba(108,92,231,0.7)' : 'rgba(255,255,255,0.2)',
-                  fontWeight: 'bold', fontFamily: 'serif'
+                  fontSize: compact ? '9px' : '11px',
+                  color: isAngular ? 'rgba(124,92,252,0.75)' : 'rgba(255,255,255,0.18)',
+                  fontWeight: 'bold', fontFamily: 'serif',
+                  textShadow: isAngular ? '0 0 8px rgba(124,92,252,0.3)' : 'none'
                 }}>
                   {ROMAN[hNum-1]}
                 </span>
                 <span style={{
-                  fontSize: compact ? '12px' : '16px',
-                  color: 'rgba(255,255,255,0.15)',
-                  lineHeight: 1
+                  fontSize: compact ? '11px' : '15px',
+                  color: 'rgba(255,255,255,0.18)',
+                  lineHeight: 1,
+                  opacity: isHovered ? 0.7 : 0.4,
+                  transition: 'opacity 0.2s'
                 }}>
                   {SIGN_SYMBOLS_SHORT[sign] || ''}
                 </span>
               </div>
+
               <div style={{
                 flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                marginTop: compact ? '2px' : '4px'
+                padding: '0 2px', position:'relative', zIndex:1
               }}>
                 <div style={{display:'flex', flexWrap:'wrap', gap: compact ? '1px' : '2px', justifyContent:'center'}}>
-                  {planets.map(p => (
+                  {planets.map((p, pi) => (
                     <span key={p.name} style={{
-                      fontSize: compact ? '16px' : '22px', lineHeight: 1.1,
+                      fontSize: compact ? '14px' : '20px', lineHeight: 1.2,
                       color: PLANET_COLORS[p.name] || '#fff',
-                      textShadow: '0 0 8px rgba(0,0,0,0.7)',
-                      transition: 'transform 0.15s, filter 0.15s',
-                      filter: hoveredHouse === hNum ? 'brightness(1.3)' : 'none'
+                      textShadow: `0 0 10px ${PLANET_COLORS[p.name]}40`,
+                      transition: 'transform 0.2s, filter 0.2s',
+                      filter: isHovered ? 'brightness(1.3)' : 'none',
+                      transform: isHovered ? `translateY(-${Math.min(pi, 2)}px)` : 'none'
                     }}>
                       {PLANET_SYMBOLS[p.name] || p.name[0]}
                     </span>
                   ))}
                 </div>
               </div>
+
               {!compact && planets.length > 0 && (
-                <div style={{display:'flex', flexWrap:'wrap', gap:'1px', justifyContent:'center', marginTop:'auto', paddingTop:'1px'}}>
+                <div style={{
+                  display:'flex', flexWrap:'wrap', gap:'1px', justifyContent:'center',
+                  marginTop:'auto', padding:'2px 3px', position:'relative', zIndex:1
+                }}>
                   {planets.map(p => (
                     <span key={`l${p.name}`} style={{
-                      fontSize:'7px', color: PLANET_COLORS[p.name] || 'rgba(255,255,255,0.3)',
-                      opacity: 0.6
+                      fontSize:'6px', color: PLANET_COLORS[p.name] || 'rgba(255,255,255,0.2)',
+                      opacity: 0.5, lineHeight:1
                     }}>
-                      {p.degree?.toFixed(1)}°
+                      {p.degree?.toFixed(1)}
                     </span>
                   ))}
                 </div>
@@ -238,11 +304,11 @@ export default function KundliChart({ chart, compact }) {
       </div>
 
       {!compact && (
-        <div style={{marginTop:'14px', display:'flex', gap:'6px 14px', flexWrap:'wrap', justifyContent:'center', maxWidth:'420px'}}>
+        <div style={{marginTop:'12px', display:'flex', gap:'4px 12px', flexWrap:'wrap', justifyContent:'center', maxWidth:'420px'}}>
           {Object.entries(PLANET_SYMBOLS).filter(([name]) => chart.planets[name]).map(([name, sym]) => (
-            <span key={name} style={{fontSize:'12px', color: PLANET_COLORS[name] || '#ccc', display:'flex', alignItems:'center', gap:'4px'}}>
-              <span style={{fontSize:'16px'}}>{sym}</span>
-              <span style={{color:'rgba(255,255,255,0.55)'}}>{name}</span>
+            <span key={name} style={{fontSize:'11px', color: PLANET_COLORS[name] || '#ccc', display:'flex', alignItems:'center', gap:'3px'}}>
+              <span style={{fontSize:'14px', textShadow:`0 0 6px ${PLANET_COLORS[name]}50`}}>{sym}</span>
+              <span style={{color:'rgba(255,255,255,0.5)'}}>{name}</span>
             </span>
           ))}
         </div>
@@ -254,22 +320,23 @@ export default function KundliChart({ chart, compact }) {
           top: tooltipPos.y,
           left: '50%',
           transform: 'translate(-50%, -100%)',
-          background: 'rgba(20,15,40,0.97)',
-          border: '1px solid rgba(108,92,231,0.4)',
-          borderRadius: '12px',
-          padding: '14px 18px',
+          background: 'linear-gradient(160deg, rgba(20,15,45,0.98), rgba(15,10,35,0.98))',
+          border: '1px solid rgba(124,92,252,0.35)',
+          borderRadius: '14px',
+          padding: '16px 20px',
           zIndex: 100,
-          maxWidth: '340px',
+          maxWidth: '360px',
           width: 'max-content',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
-          backdropFilter: 'blur(8px)',
+          boxShadow: '0 12px 48px rgba(0,0,0,0.6), 0 0 30px rgba(108,92,231,0.1)',
+          backdropFilter: 'blur(12px)',
           pointerEvents: 'none'
         }}>
-          <div style={{fontSize:'13px', fontWeight:'bold', color:'#7C5CFC', marginBottom:'4px'}}>
-            House {ROMAN[hoveredHouse-1]} — {houseSign[hoveredHouse]} ({HOUSE_NAMES[hoveredHouse-1]})
+          <div style={{fontSize:'14px', fontWeight:'bold', color:'#9B7EFF', marginBottom:'4px', display:'flex', alignItems:'center', gap:'6px'}}>
+            <span style={{fontSize:'16px'}}>{SIGN_SYMBOLS_SHORT[houseSign[hoveredHouse]]}</span>
+            House {ROMAN[hoveredHouse-1]} — {houseSign[hoveredHouse]}
           </div>
-          <div style={{fontSize:'10px', color:'rgba(255,255,255,0.35)', marginBottom:'8px'}}>
-            Governs: {HOUSE_TOPICS[hoveredHouse-1]}
+          <div style={{fontSize:'10px', color:'rgba(255,255,255,0.3)', marginBottom:'10px', textTransform:'uppercase', letterSpacing:'0.5px'}}>
+            {HOUSE_NAMES[hoveredHouse-1]} — {HOUSE_TOPICS[hoveredHouse-1]}
           </div>
           {(() => {
             const planets = planetsByHouse[hoveredHouse] || [];
@@ -278,12 +345,12 @@ export default function KundliChart({ chart, compact }) {
             const summaryText = summary ? summary(sign, planets) : '';
             return (
               <>
-                <p style={{fontSize:'12px', color:'rgba(255,255,255,0.85)', lineHeight:'1.5', margin:'0 0 8px 0'}}>
+                <p style={{fontSize:'12px', color:'rgba(255,255,255,0.85)', lineHeight:'1.6', margin:'0 0 10px 0'}}>
                   {summaryText}
                 </p>
                 {planets.length > 0 && (
-                  <div style={{borderTop:'1px solid rgba(255,255,255,0.06)', paddingTop:'8px'}}>
-                    <div style={{fontSize:'10px', color:'rgba(255,255,255,0.4)', marginBottom:'6px', textTransform:'uppercase', letterSpacing:'1px'}}>Planets in this house</div>
+                  <div style={{borderTop:'1px solid rgba(255,255,255,0.07)', paddingTop:'10px'}}>
+                    <div style={{fontSize:'10px', color:'rgba(255,255,255,0.35)', marginBottom:'6px', textTransform:'uppercase', letterSpacing:'1px'}}>Planets in this house</div>
                     {planets.map(p => (
                       <div key={p.name} style={{display:'flex', alignItems:'center', gap:'8px', marginBottom:'4px'}}>
                         <span style={{fontSize:'16px', color: PLANET_COLORS[p.name], width:'20px', textAlign:'center'}}>
@@ -291,9 +358,9 @@ export default function KundliChart({ chart, compact }) {
                         </span>
                         <div style={{flex:1}}>
                           <div style={{fontSize:'12px', color:'#fff', fontWeight:500}}>
-                            {p.name} in {p.sign} {p.degree?.toFixed(1)}°
+                            {p.name} in {p.sign} {p.degree?.toFixed(1)}
                           </div>
-                          <div style={{fontSize:'11px', color:'rgba(255,255,255,0.6)'}}>
+                          <div style={{fontSize:'11px', color:'rgba(255,255,255,0.55)'}}>
                             {PLANET_PREDICTIONS[p.name] ? PLANET_PREDICTIONS[p.name](hoveredHouse) : ''}
                           </div>
                         </div>
@@ -301,10 +368,13 @@ export default function KundliChart({ chart, compact }) {
                     ))}
                   </div>
                 )}
-                <div style={{fontSize:'10px', color:'rgba(255,255,255,0.25)', marginTop:'6px', fontStyle:'italic'}}>
-                  {[1,4,7,10].includes(hoveredHouse) ? '★ Angular house — strongly active in your life' :
-                   [2,5,8,11].includes(hoveredHouse) ? '◈ Succedent house — stabilizing influence' :
-                   '○ Cadent house — adapting and learning'}
+                <div style={{
+                  fontSize:'10px', color:'rgba(255,255,255,0.25)', marginTop:'8px', fontStyle:'italic',
+                  borderTop:'1px solid rgba(255,255,255,0.04)', paddingTop:'8px'
+                }}>
+                  {[1,4,7,10].includes(hoveredHouse) ? '\u2605 Angular house \u2014 strongly active' :
+                   [2,5,8,11].includes(hoveredHouse) ? '\u25C8 Succedent house \u2014 stabilizing' :
+                   '\u25CB Cadent house \u2014 adapting'}
                 </div>
               </>
             );
